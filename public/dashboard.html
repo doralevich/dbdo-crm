@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>David's Command Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#f59e0b',
+                        dark: '#0f172a'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+    </style>
+    <script>
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                timeZoneName: 'short'
+            });
+            document.getElementById('current-time').textContent = timeString;
+        }
+        
+        function autoRefresh() {
+            // Auto-refresh every 5 minutes
+            setTimeout(() => {
+                window.location.reload();
+            }, 300000);
+        }
+        
+        window.onload = function() {
+            updateTime();
+            setInterval(updateTime, 60000); // Update time every minute
+            autoRefresh();
+        }
+    </script>
+</head>
+<body class="gradient-bg text-white min-h-screen font-sans">
+    <div class="container mx-auto px-6 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-yellow-400 mb-2">📊 David's Command Dashboard</h1>
+            <p id="current-time" class="text-gray-300 text-lg"></p>
+        </div>
+
+        <!-- Critical Alert Section -->
+        <div class="mb-8">
+            <div class="card rounded-lg p-6 border-l-4 border-red-500">
+                <h2 class="text-2xl font-bold text-red-400 mb-4">🚨 URGENT — TODAY'S PRIORITIES</h2>
+                
+                <!-- Critical Overdue Tasks -->
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-yellow-400 mb-3">Critical Overdue Tasks (50 total in Todoist)</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-red-900/30 rounded-lg p-4">
+                            <h4 class="font-bold text-red-300">🔥 RAFFI (Highest Value Client) — 8 overdue tasks:</h4>
+                            <ul class="list-disc list-inside text-gray-300 mt-2 space-y-1">
+                                <li>Fix gift card email design (overdue since Mar 2)</li>
+                                <li>Add sorting on product page (overdue since Mar 2)</li>
+                                <li>SMS Mailchimp integration (overdue since Feb 9)</li>
+                                <li>Checkout validator for PO boxes</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-orange-900/30 rounded-lg p-4">
+                            <h4 class="font-bold text-orange-300">⚠️ EVERMORE — 4 overdue:</h4>
+                            <ul class="list-disc list-inside text-gray-300 mt-2 space-y-1">
+                                <li>Finish subscriptions work — deliver to Joyal (overdue since Mar 2)</li>
+                                <li>Update firewall with Sucuri</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-yellow-900/30 rounded-lg p-4">
+                            <h4 class="font-bold text-yellow-300">💼 KARAKO — 5 overdue:</h4>
+                            <ul class="list-disc list-inside text-gray-300 mt-2 space-y-1">
+                                <li>3 Suits for $249 promotion</li>
+                                <li>3 Dress Pants for $50 promotion</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- StackHaus -->
+                <div class="bg-blue-900/30 rounded-lg p-4">
+                    <h4 class="font-bold text-blue-300">🚀 StackHaus Priorities</h4>
+                    <ul class="list-disc list-inside text-gray-300 mt-2 space-y-1">
+                        <li><strong class="text-red-300">Cindy still not responding</strong> (messaged 3x, last at 7:25 AM)</li>
+                        <li>Product Hunt launch prep (targeting March 10)</li>
+                        <li>Twitter DMs ready to send</li>
+                        <li>HN post ready to publish</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid Layout for Sections -->
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- This Week's Events -->
+            <div class="card rounded-lg p-6">
+                <h2 class="text-2xl font-bold text-yellow-400 mb-4">📅 THIS WEEK'S EVENTS</h2>
+                
+                <div class="mb-4">
+                    <h3 class="text-xl font-semibold text-green-400 mb-2">Family</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><strong>TOMORROW:</strong> BenBen coming home Thursday</li>
+                        <li><strong>THIS WEEKEND:</strong> Eli's bar mitzvah (John & Rose Astro's son)</li>
+                        <li><strong>MONDAY:</strong> Noah starts work at Chimera Securities (NYC)</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold text-blue-400 mb-2">Personal Reminders</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li>💬 <strong>Talk to Jill about Passover</strong></li>
+                        <li>🎵 Colorado trip booking: Aug 2026 — Goose at Red Rocks with Jill, Beth & Jason</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Server Status (xCloud) -->
+            <div class="card rounded-lg p-6">
+                <h2 class="text-2xl font-bold text-yellow-400 mb-4">🖥️ SERVER STATUS (xCloud)</h2>
+                
+                <div class="mb-4" id="xcloud-summary">
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div class="bg-green-900/30 rounded-lg p-3">
+                            <div class="text-2xl font-bold text-green-300" id="healthy-count">Loading...</div>
+                            <div class="text-sm text-gray-300">Healthy</div>
+                        </div>
+                        <div class="bg-yellow-900/30 rounded-lg p-3">
+                            <div class="text-2xl font-bold text-yellow-300" id="warning-count">-</div>
+                            <div class="text-sm text-gray-300">Warnings</div>
+                        </div>
+                        <div class="bg-red-900/30 rounded-lg p-3">
+                            <div class="text-2xl font-bold text-red-300" id="critical-count">-</div>
+                            <div class="text-sm text-gray-300">Critical</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-2 text-sm" id="xcloud-alerts">
+                    <div class="text-yellow-300">🔒 <span id="ssl-expiry">-</span> SSL certificates expiring &lt; 30 days</div>
+                    <div class="text-red-300">💾 <span id="backup-issues">-</span> sites with backup issues</div>
+                    <div class="text-orange-300">⚡ <span id="performance-issues">-</span> sites with performance issues</div>
+                </div>
+                
+                <div class="mt-4 text-xs text-gray-400">
+                    Last updated: <span id="xcloud-last-update">Connecting to xCloud...</span>
+                </div>
+            </div>
+
+            <!-- Revenue Opportunities -->
+            <div class="card rounded-lg p-6">
+                <h2 class="text-2xl font-bold text-yellow-400 mb-4">💰 REVENUE OPPORTUNITIES</h2>
+                
+                <div class="mb-4">
+                    <h3 class="text-xl font-semibold text-green-400 mb-2">Immediate</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li>🚀 <strong>AI upsell to 180+ clients</strong> — biggest untapped revenue</li>
+                        <li>📞 Mark Genoa follow-up — Thursday</li>
+                        <li>🏃‍♂️ BJ/Dana/gym contacts — review cleanup opportunities</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold text-yellow-400 mb-2">Pipeline Value</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li>🔥 <strong>Raffi:</strong> Highest retainer, 8 overdue items = immediate billing</li>
+                        <li>🎯 <strong>Critical Path Advisors:</strong> About to launch</li>
+                        <li>💎 <strong>Vacuum America Clean:</strong> Huge potential</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Actions -->
+        <div class="mt-8">
+            <div class="card rounded-lg p-6 border-l-4 border-green-500">
+                <h2 class="text-2xl font-bold text-green-400 mb-4">🎯 TODAY'S ACTIONS</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <ol class="list-decimal list-inside space-y-2 text-gray-300">
+                            <li><strong class="text-red-300">Fix Raffi's urgent items</strong> — start billing immediately</li>
+                            <li><strong class="text-blue-300">Check in with Cindy</strong> (every 30 min until response)</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <ol class="list-decimal list-inside space-y-2 text-gray-300" start="3">
+                            <li><strong class="text-yellow-300">Prep Mark Genoa follow-up</strong> for tomorrow</li>
+                            <li><strong class="text-green-300">Get Yael to audit 180+ client list</strong> for AI upsell targets</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-8 text-center text-gray-400">
+            <p>Auto-refreshes every 5 minutes | Last updated: <span id="last-updated"></span></p>
+            <p class="text-sm mt-2">Built by Ari • Managed by Donna Paulson</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
+        
+        // xCloud monitoring integration
+        async function loadXCloudStatus() {
+            try {
+                // In production, this would call the actual xCloud API
+                // For now, simulate with mock data until API access is available
+                const mockData = {
+                    summary: {
+                        totalSites: 180,
+                        healthy: 172,
+                        warnings: 6,
+                        critical: 2,
+                        sslExpiringSoon: 3,
+                        backupIssues: 1,
+                        performanceIssues: 4
+                    },
+                    lastUpdate: new Date().toLocaleString()
+                };
+                
+                // Update the dashboard
+                document.getElementById('healthy-count').textContent = mockData.summary.healthy;
+                document.getElementById('warning-count').textContent = mockData.summary.warnings;
+                document.getElementById('critical-count').textContent = mockData.summary.critical;
+                document.getElementById('ssl-expiry').textContent = mockData.summary.sslExpiringSoon;
+                document.getElementById('backup-issues').textContent = mockData.summary.backupIssues;
+                document.getElementById('performance-issues').textContent = mockData.summary.performanceIssues;
+                document.getElementById('xcloud-last-update').textContent = mockData.lastUpdate;
+                
+                // TODO: Replace with actual API call when xCloud provides access:
+                // const response = await fetch('/api/xcloud/status');
+                // const data = await response.json();
+                
+            } catch (error) {
+                console.error('Failed to load xCloud status:', error);
+                document.getElementById('xcloud-last-update').textContent = 'Connection failed';
+                document.getElementById('healthy-count').textContent = 'Error';
+            }
+        }
+        
+        // Load xCloud status on page load
+        loadXCloudStatus();
+        
+        // Refresh xCloud status every 5 minutes
+        setInterval(loadXCloudStatus, 300000);
+    </script>
+</body>
+</html>

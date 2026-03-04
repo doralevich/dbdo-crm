@@ -44,10 +44,10 @@ A web dashboard for David Oralevich's agency (Designs By Dave O / DBDO). Single-
 - Today's tasks highlighted
 - Can filter by client, priority, status
 
-### 4. Pipeline
-- Proposals: sent, pending, won, lost
-- Revenue tracking (if Wave connected later)
-- Follow-up reminders (Day 3/7/14)
+### 4. Client Cards (Detail View)
+- Click any client → opens a full card
+- Shows: contact info, website, tasks, recent emails, notes, proposals, interactions
+- Easy to update, add notes, log calls
 
 ### 5. Team
 - Agent assignments and active tasks
