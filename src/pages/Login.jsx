@@ -1,5 +1,18 @@
 import { useState } from "react";
 
+// SHA-256 hash of the password for client-side validation
+// This is a basic gate — for production, use server-side auth
+const VALID_HASH = "8ff45e622b068d975d63e24a71ff93adf156e218d21c5261a3ba9e94645a0b8e";
+
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const buffer = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(buffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
 export default function Login({ onLogin }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -11,21 +24,15 @@ export default function Login({ onLogin }) {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
-      const data = await res.json();
-
-      if (data.success && data.token) {
-        localStorage.setItem("crm_token", data.token);
-        onLogin(data.token);
+      const hash = await hashPassword(password);
+      if (hash === VALID_HASH) {
+        localStorage.setItem("crm_token", hash);
+        onLogin(hash);
       } else {
         setError("Invalid password");
       }
     } catch {
-      setError("Connection error — try again");
+      setError("Authentication error");
     } finally {
       setLoading(false);
     }

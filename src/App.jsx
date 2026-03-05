@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Login from "./pages/Login";
@@ -10,39 +10,13 @@ import Email from "./pages/Email";
 import Calendar from "./pages/Calendar";
 import Team from "./pages/Team";
 
+const VALID_HASH = "8ff45e622b068d975d63e24a71ff93adf156e218d21c5261a3ba9e94645a0b8e";
+
 export default function App() {
-  const [token, setToken] = useState(null);
-  const [checking, setChecking] = useState(true);
-
-  useEffect(() => {
-    // Check for existing valid session
+  const [token, setToken] = useState(() => {
     const stored = localStorage.getItem("crm_token");
-    if (stored) {
-      // Validate token against server
-      fetch("/api/dashboard/stats", {
-        headers: { Authorization: `Bearer ${stored}` },
-      })
-        .then((res) => {
-          if (res.ok) {
-            setToken(stored);
-          } else {
-            localStorage.removeItem("crm_token");
-          }
-        })
-        .catch(() => localStorage.removeItem("crm_token"))
-        .finally(() => setChecking(false));
-    } else {
-      setChecking(false);
-    }
-  }, []);
-
-  if (checking) {
-    return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-        <div className="text-zinc-400">Loading...</div>
-      </div>
-    );
-  }
+    return stored === VALID_HASH ? stored : null;
+  });
 
   if (!token) {
     return <Login onLogin={setToken} />;
