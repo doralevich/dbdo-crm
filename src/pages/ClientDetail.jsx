@@ -143,9 +143,20 @@ export default function ClientDetail() {
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-brand-navy-lighter text-brand-gold text-lg font-bold">
-              {getInitials(client.name)}
-            </div>
+            {client.logo_url ? (
+              <div className="h-14 w-14 rounded-xl overflow-hidden bg-white flex items-center justify-center shrink-0">
+                <img
+                  src={client.logo_url}
+                  alt={client.name}
+                  className="h-full w-full object-contain p-1"
+                  onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = `<span class="flex h-14 w-14 items-center justify-center rounded-xl bg-brand-navy-lighter text-brand-gold text-lg font-bold">${getInitials(client.name)}</span>`; }}
+                />
+              </div>
+            ) : (
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-brand-navy-lighter text-brand-gold text-lg font-bold">
+                {getInitials(client.name)}
+              </div>
+            )}
             <div>
               <h1 className="text-2xl font-bold text-text-primary">
                 {client.name}
