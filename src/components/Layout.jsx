@@ -5,6 +5,7 @@ import {
   CheckSquare,
   Mail,
   CalendarDays,
+  Contact,
   UsersRound,
   Menu,
   X,
@@ -19,6 +20,7 @@ const navItems = [
   { to: "/tasks", icon: CheckSquare, label: "Tasks" },
   { to: "/email", icon: Mail, label: "Email" },
   { to: "/calendar", icon: CalendarDays, label: "Calendar" },
+  { to: "/contacts", icon: Contact, label: "Contacts" },
   { to: "/team", icon: UsersRound, label: "Team" },
 ];
 

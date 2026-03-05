@@ -59,6 +59,17 @@ export const fetchEvents = (params) => {
   return request(`/calendar${qs}`);
 };
 
+// Contacts (Google)
+export const fetchContacts = (params) => {
+  const qs = params ? `?${new URLSearchParams(params)}` : "";
+  return request(`/contacts${qs}`);
+};
+export const updateContactCategory = (id, category) =>
+  request(`/contacts/${id}/category`, {
+    method: "PATCH",
+    body: JSON.stringify({ category }),
+  });
+
 // Dashboard stats
 export const fetchDashboardStats = () => request("/dashboard/stats");
 

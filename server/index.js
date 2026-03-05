@@ -11,6 +11,7 @@ import emailsRouter from "./routes/emails.js";
 import calendarRouter from "./routes/calendar.js";
 import dashboardRouter from "./routes/dashboard.js";
 import teamRouter from "./routes/team.js";
+import contactsRouter from "./routes/contacts.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -32,6 +33,7 @@ app.use("/api/emails", emailsRouter);
 app.use("/api/calendar", calendarRouter);
 app.use("/api/dashboard", dashboardRouter);
 app.use("/api/team", teamRouter);
+app.use("/api/contacts", contactsRouter);
 
 // Serve static files in production
 const distPath = join(__dirname, "..", "dist");
