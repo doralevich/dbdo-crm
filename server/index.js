@@ -4,6 +4,7 @@ import cors from "cors";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 
+import { authMiddleware, loginHandler } from "./middleware/auth.js";
 import clientsRouter from "./routes/clients.js";
 import tasksRouter from "./routes/tasks.js";
 import emailsRouter from "./routes/emails.js";
@@ -17,6 +18,12 @@ const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
+
+// Auth endpoint (public)
+app.post("/api/auth/login", loginHandler);
+
+// Protect all API routes
+app.use("/api", authMiddleware);
 
 // API routes
 app.use("/api/clients", clientsRouter);

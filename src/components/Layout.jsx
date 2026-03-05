@@ -8,6 +8,7 @@ import {
   UsersRound,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "../lib/utils";
@@ -81,14 +82,26 @@ export default function Layout() {
 
         {/* Footer */}
         <div className="border-t border-border-subtle p-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-gold/20 text-brand-gold text-xs font-semibold">
-              DO
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-gold/20 text-brand-gold text-xs font-semibold">
+                DO
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-text-primary truncate">David O.</p>
+                <p className="text-xs text-text-muted truncate">Owner</p>
+              </div>
             </div>
-            <div className="min-w-0">
-              <p className="text-sm font-medium text-text-primary truncate">David O.</p>
-              <p className="text-xs text-text-muted truncate">Owner</p>
-            </div>
+            <button
+              onClick={() => {
+                localStorage.removeItem("crm_token");
+                window.location.reload();
+              }}
+              className="text-text-muted hover:text-red-400 transition-colors"
+              title="Sign out"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </aside>
