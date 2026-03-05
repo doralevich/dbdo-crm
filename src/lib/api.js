@@ -1,10 +1,40 @@
+/**
+ * Build-time embedded static data.
+ * Vite imports these JSON files at build time, so data is always
+ * available even when both Express API and static file serving fail
+ * (e.g., Nginx catch-all intercepts /data/*.json requests).
+ */
+import clientsData from "../../public/data/clients.json";
+import tasksData from "../../public/data/tasks.json";
+import contactsData from "../../public/data/contacts.json";
+import calendarData from "../../public/data/calendar.json";
+import emailsData from "../../public/data/emails.json";
+import teamData from "../../public/data/team.json";
+import dashboardStatsData from "../../public/data/dashboard-stats.json";
+
 const API_BASE = "/api";
 
 /**
- * Static data fallback mapping.
- * When the Express API server isn't running (e.g., XCloud static hosting),
- * /api/* routes return HTML (Nginx catch-all). We detect this and serve
- * pre-built JSON data files instead.
+ * Embedded data map — bundled into the JS at build time.
+ * This is the ultimate fallback when both API and file fetches fail.
+ */
+const EMBEDDED_DATA_MAP = {
+  "/clients": clientsData,
+  "/tasks": tasksData,
+  "/contacts": contactsData,
+  "/calendar": calendarData,
+  "/emails": emailsData,
+  "/team": teamData,
+  "/dashboard/stats": dashboardStatsData,
+};
+
+function getEmbeddedData(apiPath) {
+  const clean = apiPath.split("?")[0];
+  return EMBEDDED_DATA_MAP[clean] || null;
+}
+
+/**
+ * Static data fallback mapping (runtime fetch attempt).
  */
 const STATIC_DATA_MAP = {
   "/clients": "/data/clients.json",
@@ -17,19 +47,35 @@ const STATIC_DATA_MAP = {
 };
 
 function getStaticPath(apiPath) {
-  // Strip query params and find matching static file
   const clean = apiPath.split("?")[0];
   return STATIC_DATA_MAP[clean] || null;
 }
 
 async function fetchStaticFallback(path) {
+  // First try runtime fetch of static JSON file
   const staticPath = getStaticPath(path);
-  if (!staticPath) {
-    throw new Error(`No static fallback for ${path}`);
+  if (staticPath) {
+    try {
+      const res = await fetch(staticPath);
+      const contentType = res.headers.get("content-type") || "";
+      // Only use the response if it's actually JSON, not an HTML catch-all
+      if (res.ok && !contentType.includes("text/html")) {
+        return res.json();
+      }
+    } catch {
+      // Fall through to embedded data
+    }
   }
-  const res = await fetch(staticPath);
-  if (!res.ok) throw new Error(`Static data not found: ${staticPath}`);
-  return res.json();
+
+  // Final fallback: use build-time embedded data
+  const embedded = getEmbeddedData(path);
+  if (embedded) {
+    console.info(`[CRM] Using embedded data for ${path}`);
+    // Return a deep clone to prevent mutation of the module-level data
+    return JSON.parse(JSON.stringify(embedded));
+  }
+
+  throw new Error(`No data available for ${path}`);
 }
 
 async function request(path, options = {}) {
@@ -42,7 +88,7 @@ async function request(path, options = {}) {
     // Detect HTML response (means API server isn't running, Nginx returned index.html)
     const contentType = res.headers.get("content-type") || "";
     if (contentType.includes("text/html")) {
-      console.warn(`[CRM] API returned HTML for ${path} — using static data fallback`);
+      console.warn(`[CRM] API returned HTML for ${path} — using fallback data`);
       return fetchStaticFallback(path);
     }
 
@@ -52,13 +98,9 @@ async function request(path, options = {}) {
     }
     return res.json();
   } catch (err) {
-    // Network error or API down — try static fallback
-    const staticPath = getStaticPath(path);
-    if (staticPath) {
-      console.warn(`[CRM] API request failed for ${path} — using static data fallback`);
-      return fetchStaticFallback(path);
-    }
-    throw err;
+    // Network error or API down — try fallback chain
+    console.warn(`[CRM] API request failed for ${path} — using fallback data`);
+    return fetchStaticFallback(path);
   }
 }
 
