@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 
 import { authMiddleware, loginHandler } from "./middleware/auth.js";
+import { authGoogleHandler, authCallbackHandler } from "./routes/oauth.js";
 import clientsRouter from "./routes/clients.js";
 import tasksRouter from "./routes/tasks.js";
 import emailsRouter from "./routes/emails.js";
@@ -22,6 +23,10 @@ app.use(express.json());
 
 // Auth endpoint (public)
 app.post("/api/auth/login", loginHandler);
+
+// Google OAuth endpoints (public — no auth required)
+app.get("/auth/google", authGoogleHandler);
+app.get("/auth/callback", authCallbackHandler);
 
 // Protect all API routes
 app.use("/api", authMiddleware);
