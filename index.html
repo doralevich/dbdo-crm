@@ -3,28 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Donna CRM — DBDO</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>Designs By Dave O. — CRM</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Inter', sans-serif; background: #f0f2f5; color: #111318; font-size: 15px; }
-.sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 240px; background: #111318; color: #fff; padding: 20px 0; overflow-y: auto; }
-.sidebar h1 { font-size: 18px; font-weight: 700; padding: 0 20px 20px; border-bottom: 1px solid #2a2d35; }
-.sidebar h1 span { color: #f5c542; }
-.nav-item { display: flex; align-items: center; padding: 12px 20px; color: #9ca3af; text-decoration: none; transition: all .2s; cursor: pointer; }
+
+/* Top header bar */
+.top-bar { position: fixed; top: 0; left: 0; right: 0; height: 40px; background: #111318; color: #9ca3af; display: flex; align-items: center; padding: 0 20px; font-size: 12px; z-index: 100; gap: 24px; overflow: hidden; }
+.top-bar .stock { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.top-bar .stock .sym { color: #e5e7eb; font-weight: 600; }
+.top-bar .stock .price { color: #fff; }
+.top-bar .stock .up { color: #10b981; }
+.top-bar .stock .down { color: #ef4444; }
+.top-bar .weather { display: flex; align-items: center; gap: 4px; color: #e5e7eb; margin-left: auto; }
+.top-bar .status { display: flex; align-items: center; gap: 6px; }
+.top-bar .status .dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; }
+.top-bar .time { color: #e5e7eb; font-weight: 500; }
+
+/* Sidebar */
+.sidebar { position: fixed; left: 0; top: 40px; bottom: 0; width: 240px; background: #111318; color: #fff; padding: 16px 0; overflow-y: auto; }
+.sidebar .brand { padding: 4px 20px 20px; border-bottom: 1px solid #2a2d35; display: flex; align-items: center; gap: 10px; }
+.sidebar .brand-icon { width: 36px; height: 36px; background: #f5c542; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #111318; }
+.sidebar .brand-name { font-size: 14px; font-weight: 700; line-height: 1.2; }
+.sidebar .brand-sub { font-size: 11px; color: #6b7280; }
+.nav-item { display: flex; align-items: center; padding: 12px 20px; color: #9ca3af; text-decoration: none; transition: all .2s; cursor: pointer; font-size: 14px; gap: 10px; }
 .nav-item:hover, .nav-item.active { background: #1e2028; color: #fff; }
 .nav-item.active { border-right: 3px solid #f5c542; }
-.main { margin-left: 240px; padding: 24px; }
+
+/* Main content */
+.main { margin-left: 240px; margin-top: 40px; padding: 24px; }
 .header { margin-bottom: 24px; }
 .header h2 { font-size: 24px; font-weight: 700; }
 .header p { color: #6b7280; margin-top: 4px; }
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
-.stat-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
-.stat-card .label { font-size: 13px; color: #6b7280; margin-bottom: 8px; }
+.stat-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.stat-card .label { font-size: 13px; color: #6b7280; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .5px; }
 .stat-card .value { font-size: 28px; font-weight: 700; }
-.stat-card .value.gold { color: #f5c542; }
+.stat-card .value.gold { color: #d4a017; }
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 16px; margin-bottom: 24px; }
-.card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+.card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
 .card h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #e5e7eb; }
 .task-item { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #f3f4f6; }
 .task-item:last-child { border-bottom: none; }
@@ -38,24 +57,48 @@ body { font-family: 'Inter', sans-serif; background: #f0f2f5; color: #111318; fo
 .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
 .badge.active { background: #d1fae5; color: #065f46; }
 .badge.retainer { background: #dbeafe; color: #1e40af; }
+.badge.project { background: #fef3c7; color: #92400e; }
+.badge.lead { background: #e0e7ff; color: #3730a3; }
 .event-item { padding: 8px 0; border-bottom: 1px solid #f3f4f6; }
 .event-item:last-child { border-bottom: none; }
 .event-time { font-size: 12px; color: #6b7280; }
 .section { display: none; }
 .section.active { display: block; }
 #loading { text-align: center; padding: 60px; font-size: 18px; color: #6b7280; }
-@media (max-width: 768px) { .sidebar { width: 60px; } .sidebar h1, .nav-text { display: none; } .main { margin-left: 60px; } .cards { grid-template-columns: 1fr; } }
+@media (max-width: 768px) { 
+  .sidebar { width: 60px; } .sidebar .brand-name, .sidebar .brand-sub, .nav-text { display: none; } 
+  .main { margin-left: 60px; } .cards { grid-template-columns: 1fr; } 
+  .top-bar { font-size: 10px; gap: 12px; }
+}
 </style>
 </head>
 <body>
+
+<!-- Top Header Bar -->
+<div class="top-bar">
+  <div id="ticker" style="display:flex;gap:24px;align-items:center;overflow:hidden;flex:1"></div>
+  <div class="weather" id="weather-bar">☁️ —</div>
+  <div class="status"><div class="dot"></div> Online</div>
+  <div class="time" id="clock"></div>
+</div>
+
+<!-- Sidebar -->
 <div class="sidebar">
-  <h1><span>D</span> Donna CRM</h1>
+  <div class="brand">
+    <div class="brand-icon">D</div>
+    <div>
+      <div class="brand-name">Designs By Dave O.</div>
+      <div class="brand-sub">Agency CRM</div>
+    </div>
+  </div>
   <a class="nav-item active" data-page="dashboard">📊 <span class="nav-text">Dashboard</span></a>
   <a class="nav-item" data-page="clients">👥 <span class="nav-text">Clients</span></a>
   <a class="nav-item" data-page="tasks">✅ <span class="nav-text">Tasks</span></a>
   <a class="nav-item" data-page="calendar">📅 <span class="nav-text">Calendar</span></a>
   <a class="nav-item" data-page="contacts">📇 <span class="nav-text">Contacts</span></a>
 </div>
+
+<!-- Main Content -->
 <div class="main">
   <div id="loading">Loading CRM data...</div>
   <div id="content" style="display:none">
@@ -91,12 +134,48 @@ body { font-family: 'Inter', sans-serif; background: #f0f2f5; color: #111318; fo
     </div>
   </div>
 </div>
+
 <script>
 const API = '/api';
 let TOKEN = '';
 
+// Clock
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = 
+    now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'America/New_York' }) + 
+    ' · ' + now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'America/New_York' });
+}
+updateClock(); setInterval(updateClock, 30000);
+
+// Stock ticker
+async function loadTicker() {
+  try {
+    const r = await fetch(API + '/stocks');
+    const stocks = await r.json();
+    document.getElementById('ticker').innerHTML = stocks.map(s => {
+      const chg = parseFloat(s.change);
+      const cls = isNaN(chg) || chg === 0 ? '' : (chg > 0 ? 'up' : 'down');
+      const arrow = isNaN(chg) || chg === 0 ? '' : (chg > 0 ? '↑' : '↓');
+      const pct = isNaN(chg) ? '' : Math.abs(chg).toFixed(2) + '%';
+      return '<div class="stock"><span class="sym">' + s.symbol + '</span> <span class="price">$' + s.price + '</span> <span class="' + cls + '">' + arrow + pct + '</span></div>';
+    }).join('');
+  } catch(e) {}
+}
+loadTicker(); setInterval(loadTicker, 60000);
+
+// Weather
+async function loadWeather() {
+  try {
+    const r = await fetch(API + '/weather');
+    const w = await r.json();
+    document.getElementById('weather-bar').textContent = '☁️ ' + w.temp + ' ' + w.desc;
+  } catch(e) {}
+}
+loadWeather();
+
+// CRM Data
 async function init() {
-  // Auto-login
   try {
     const res = await fetch(API + '/auth/login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({password:'Oralevich101!'}) });
     const data = await res.json();
@@ -110,7 +189,6 @@ async function init() {
       const ct = r.headers.get('content-type') || '';
       if (ct.includes('json')) return r.json();
     } catch(e) {}
-    // Fallback to static data
     try { const r2 = await fetch('/data' + path + '.json'); if(r2.ok) return r2.json(); } catch(e) {}
     return null;
   };
@@ -123,20 +201,21 @@ async function init() {
   document.getElementById('content').style.display = 'block';
 
   // Stats
-  if (stats) {
-    document.getElementById('stats-grid').innerHTML = [
-      { label: 'Total Clients', value: stats.total_clients || (clients||[]).length },
-      { label: 'Active Projects', value: stats.active_projects || 0 },
-      { label: 'Open Tasks', value: (tasks||[]).filter(t=>!t.is_completed).length },
-      { label: 'Events Today', value: stats.meetings_today || 0 },
-    ].map(s => '<div class="stat-card"><div class="label">'+s.label+'</div><div class="value'+(s.label.includes('Client')?' gold':'')+'">'+s.value+'</div></div>').join('');
-  }
+  const totalClients = stats?.total_clients || (clients||[]).length;
+  const activeProjects = stats?.active_projects || 0;
+  const openTasks = (tasks||[]).filter(t=>!t.is_completed).length;
+  const eventsToday = stats?.meetings_today || 0;
+  document.getElementById('stats-grid').innerHTML = [
+    { label: 'Total Clients', value: totalClients, gold: true },
+    { label: 'Active Projects', value: activeProjects },
+    { label: 'Open Tasks', value: openTasks },
+    { label: 'Events Today', value: eventsToday },
+  ].map(s => '<div class="stat-card"><div class="label">'+s.label+'</div><div class="value'+(s.gold?' gold':'')+'">'+s.value+'</div></div>').join('');
 
   // Tasks
   const taskHTML = (list, limit) => (list||[]).filter(t=>!t.is_completed).slice(0,limit||10).map(t =>
     '<div class="task-item"><div class="task-dot '+(t.priority==4?'red':t.priority==3?'yellow':'blue')+'"></div><div><div>'+t.content+'</div><div style="font-size:12px;color:#6b7280">'+(t.project_name||'')+'</div></div></div>'
   ).join('') || '<p style="color:#6b7280;padding:8px 0">No tasks</p>';
-
   document.getElementById('tasks-list').innerHTML = taskHTML(tasks, 8);
   document.getElementById('all-tasks').innerHTML = taskHTML(tasks, 100);
 
@@ -144,26 +223,22 @@ async function init() {
   const eventHTML = (list, limit) => (list||[]).slice(0,limit||10).map(e =>
     '<div class="event-item"><div>'+e.summary+'</div><div class="event-time">'+(e.start?.dateTime ? new Date(e.start.dateTime).toLocaleString() : e.start?.date || '')+'</div></div>'
   ).join('') || '<p style="color:#6b7280;padding:8px 0">No events</p>';
-
   document.getElementById('events-list').innerHTML = eventHTML(events, 5);
   document.getElementById('all-events').innerHTML = eventHTML(events, 50);
 
   // Clients
   const clientHTML = (list, limit) => (list||[]).slice(0,limit||50).map(c =>
-    '<div class="client-row"><div><strong>'+c.name+'</strong><div style="font-size:12px;color:#6b7280">'+(c.contact_email||c.todoist_project_id||'')+'</div></div><span class="badge '+(c.type||'active')+'">'+((c.type||'active').charAt(0).toUpperCase()+(c.type||'active').slice(1))+'</span></div>'
+    '<div class="client-row"><div><strong>'+c.name+'</strong><div style="font-size:12px;color:#6b7280">'+(c.contact_email||'')+'</div></div><span class="badge '+(c.type||'active')+'">'+((c.type||'active').charAt(0).toUpperCase()+(c.type||'active').slice(1))+'</span></div>'
   ).join('') || '<p style="color:#6b7280;padding:8px 0">No clients</p>';
-
   document.getElementById('clients-preview').innerHTML = clientHTML(clients, 8);
   document.getElementById('client-count').textContent = (clients||[]).length + ' clients';
   document.getElementById('clients-grid').innerHTML = '<div class="card">' + clientHTML(clients, 100) + '</div>';
 
   // Contacts
-  const contactHTML = (contacts||[]).slice(0,50).map(c =>
+  document.getElementById('contact-count').textContent = (contacts||[]).length + ' contacts';
+  document.getElementById('all-contacts').innerHTML = (contacts||[]).slice(0,50).map(c =>
     '<div class="client-row"><div><strong>'+(c.name||c.display_name||'Unknown')+'</strong><div style="font-size:12px;color:#6b7280">'+(c.email||'')+(c.phone?' · '+c.phone:'')+'</div></div></div>'
   ).join('') || '<p style="color:#6b7280;padding:8px 0">No contacts loaded</p>';
-
-  document.getElementById('contact-count').textContent = (contacts||[]).length + ' contacts';
-  document.getElementById('all-contacts').innerHTML = contactHTML;
 }
 
 // Navigation
