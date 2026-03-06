@@ -24,7 +24,7 @@ const navItems = [
   { to: "/team", icon: UsersRound, label: "Team" },
 ];
 
-export default function Layout() {
+export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
@@ -128,7 +128,7 @@ export default function Layout() {
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto bg-surface-raised p-4 lg:p-6">
-          <Outlet />
+          {children || <Outlet />}
         </main>
       </div>
     </div>
