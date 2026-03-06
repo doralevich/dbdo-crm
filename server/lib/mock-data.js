@@ -122,6 +122,47 @@ export const mockClients = [
     updated_at: new Date(Date.now() - 35 * 86400000).toISOString(),
   },
   {
+    id: "c9",
+    name: "Vacuum America Clean",
+    website: "vacuum-america-clean.myshopify.com",
+    type: "project",
+    status: "active",
+    monthly_value: 0,
+    contact_name: "Mark Genoa",
+    contact_email: "imark21@aol.com",
+    contact_phone: "1 (631) 974-0649",
+    referral_source: "",
+    todoist_project_id: "",
+    google_contact_id: "people/c4389558232168668562",
+    notes: `President of Nationwide Sales & Service Inc. (now Vacuum America Clean).
+Shopify store: vacuum-america-clean.myshopify.com
+Sales email: sales@vacamericaclean.com
+Domain: vacamerica.com (Google Workspace active)
+
+ACTIVE TASKS:
+- Shopify product spreadsheet — pricing & barcodes need review with Mark
+- FedEx shipping setup — Mark using UPS, waiting on FedEx pricing
+- Shopify tax document needed for store checkout
+- Fred Morante handling product imagery (DropBox links for categories: vacuums, janitorial, microfiber, mops, squeegees, hand pads, power nozzles, carts, handles)
+- Tibi (designer) did wireframe/design connect on Feb 27
+
+PAYMENTS:
+- $3,200 received via Wave (Jan 16, 2026)
+
+KEY CONTACTS:
+- Mark Genoa (President) — imark21@aol.com, (631) 974-0649
+- Fred Morante — fred@minutemanbellerose.com, (516) 376-4415 (product imagery)
+- Sales Team — sales@vacamericaclean.com
+
+LAST COMMUNICATION:
+- Mar 2: David & Mark discussing Wed meeting re: FedEx + spreadsheet review
+- Mark said he'd get back with availability
+- Status: Waiting on Mark to confirm meeting time`,
+    last_activity: new Date("2026-03-02T22:32:00Z").toISOString(),
+    created_at: "2026-01-16T10:00:00Z",
+    updated_at: new Date("2026-03-02T22:32:00Z").toISOString(),
+  },
+  {
     id: "c8",
     name: "Pinnacle Legal Group",
     website: "pinnaclelegal.com",
