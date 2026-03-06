@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>DBDO CRM</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>tailwind.config={theme:{extend:{fontFamily:{sans:['Open Sans','sans-serif']}}}}</script>
+<style>
+body { font-family: 'Open Sans', sans-serif; }
+.page { display: none; }
+.page.active { display: block; }
+.nav-item.active { color: #1C304E; font-weight: 600; }
+.nav-item.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #00B2FF; border-radius: 0 2px 2px 0; }
+.task-check { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #ccc; cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
+.task-check:hover { border-color: #00B2FF; background: rgba(0,178,255,0.08); }
+.task-check.p1 { border-color: #d1453b; }
+.task-check.p3 { border-color: #246fe0; }
+.task-check.p4 { border-color: #ccc; }
+.task-row:hover { background: #fafafa; }
+.task-row:hover .task-actions { opacity: 1; }
+.task-actions { opacity: 0; transition: opacity 0.15s; }
+.modal-bg { background: rgba(0,0,0,0.4); }
+.client-row:hover { background: #fafafa; }
+.client-row { cursor: pointer; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+</style>
+</head>
+<body class="bg-white text-gray-800">
+
+<!-- SIDEBAR -->
+<aside class="fixed left-0 top-0 bottom-0 w-64 bg-[#fafafa] border-r border-gray-200 flex flex-col z-40">
+  <div class="p-5 pb-3">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-[#1C304E] flex items-center justify-center text-white font-bold text-sm">D</div>
+      <span class="font-semibold text-[#1C304E] text-sm">Designs By Dave O.</span>
+    </div>
+  </div>
+
+  <nav class="flex-1 px-3 py-2">
+    <a data-page="dashboard" class="nav-item active relative flex items-center gap-3 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-100 cursor-pointer mb-0.5">
+      📊 <span>Dashboard</span>
+    </a>
+    <a data-page="people" class="nav-item relative flex items-center gap-3 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-100 cursor-pointer mb-0.5">
+      👥 <span>Clients</span> <span id="nav-client-count" class="ml-auto text-xs text-gray-400"></span>
+    </a>
+    <a data-page="tasks" class="nav-item relative flex items-center gap-3 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-100 cursor-pointer mb-0.5">
+      ✅ <span>Tasks</span> <span id="nav-task-count" class="ml-auto text-xs text-gray-400"></span>
+    </a>
+    <a data-page="calendar" class="nav-item relative flex items-center gap-3 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-100 cursor-pointer mb-0.5">
+      📅 <span>Calendar</span>
+    </a>
+
+    
+      <div class="flex justify-between"><span class="text-gray-500">Open Tasks</span><span id="sb-tasks" class="font-semibold text-[#1C304E]">—</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">Today</span><span id="sb-today" class="font-semibold text-[#1C304E]">—</span></div>
+    </div>
+  </nav>
+
+  <div class="p-4 border-t border-gray-200 text-xs text-gray-400 flex items-center justify-between">
+    <span id="sidebar-clock"></span>
+    <span class="text-[#00B2FF]">● Online</span>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="ml-64 min-h-screen">
+
+  <!-- Top bar - minimal -->
+  <div class="sticky top-0 bg-white/95 backdrop-blur border-b border-gray-100 px-8 py-3 flex items-center justify-between z-30">
+    <div id="ticker" class="flex gap-6 text-xs text-gray-400 overflow-hidden"></div>
+    <div class="flex items-center gap-3">
+      <span id="weather" class="text-xs text-gray-400"></span>
+      <button onclick="openAddTask()" class="flex items-center gap-1.5 px-3 py-1.5 bg-[#1C304E] text-white text-xs font-medium rounded-lg hover:bg-[#2a4d7a] transition-colors">+ Add Task</button>
+    </div>
+  </div>
+
+  <div id="loading" class="flex items-center justify-center h-96 text-gray-400">Loading...</div>
+
+  <div id="content" style="display:none">
+
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="page active max-w-4xl mx-auto px-8 py-8">
+      <h1 class="text-xl font-bold text-[#1C304E] mb-1" id="greeting">Good afternoon, David</h1>
+      <p class="text-sm text-gray-400 mb-8" id="greeting-sub"></p>
+
+      <!-- Today's Tasks -->
+      <section class="mb-10">
+        <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#00B2FF]"></span> <span onclick="document.querySelector('[data-page=tasks]').click()" class="cursor-pointer hover:text-[#00B2FF]">Active Tasks</span>
+        </h2>
+        <div id="dash-tasks" class="border-t border-gray-100"></div>
+      </section>
+
+      <!-- Upcoming Events -->
+      <section class="mb-10">
+        <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#1C304E]"></span> <span onclick="document.querySelector('[data-page=calendar]').click()" class="cursor-pointer hover:text-[#00B2FF]">Upcoming</span>
+        </h2>
+        <div id="dash-events" class="border-t border-gray-100"></div>
+      </section>
+
+
+    </div>
+
+    <!-- CLIENTS/PEOPLE -->
+    <div id="page-people" class="page max-w-4xl mx-auto px-8 py-8">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-xl font-bold text-[#1C304E]">Clients</h1>
+        <input id="people-search" type="text" placeholder="Search clients..." class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#00B2FF] w-56">
+      </div>
+      <div id="filter-tabs" class="flex gap-1.5 mb-4"></div>
+      <p id="people-count" class="text-xs text-gray-400 mb-4"></p>
+      <div id="people-list" class="grid grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </div>
+
+    <!-- TASKS -->
+    <div id="page-tasks" class="page max-w-4xl mx-auto px-8 py-8">
+      <h1 class="text-xl font-bold text-[#1C304E] mb-6">Tasks</h1>
+      <div id="tasks-grouped"></div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div id="page-calendar" class="page max-w-5xl mx-auto px-8 py-8">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-xl font-bold text-[#1C304E]">Calendar</h1>
+        <div class="flex gap-1.5">
+          <button id="cal-prev" class="px-3 py-1 text-sm text-gray-500 hover:bg-gray-100 rounded-lg">‹</button>
+          <button id="cal-today" class="px-3 py-1 text-sm text-[#1C304E] font-medium hover:bg-gray-100 rounded-lg">Today</button>
+          <button id="cal-next" class="px-3 py-1 text-sm text-gray-500 hover:bg-gray-100 rounded-lg">›</button>
+        </div>
+      </div>
+      <div id="cal-grid"></div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ADD TASK MODAL -->
+<div id="add-task-modal" class="fixed inset-0 z-50 hidden">
+  <div class="modal-bg absolute inset-0" onclick="closeAddTask()"></div>
+  <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
+    <div class="p-5">
+      <input id="new-task-content" type="text" placeholder="Task name" class="w-full text-sm border-0 outline-none placeholder-gray-300 font-medium mb-3">
+      <input id="new-task-desc" type="text" placeholder="Description" class="w-full text-sm border-0 outline-none placeholder-gray-300 text-gray-500 mb-4">
+      <div class="flex items-center gap-2">
+        <input id="new-task-project" type="text" list="project-list" placeholder="Client" class="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#00B2FF] w-36">
+        <datalist id="project-list"></datalist>
+        <select id="new-task-priority" class="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:outline-none bg-white">
+          <option value="1">Priority 4</option>
+          <option value="3">Priority 3</option>
+          <option value="4">Priority 1</option>
+        </select>
+        <input id="new-task-due" type="date" class="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#00B2FF]">
+      </div>
+    </div>
+    <div class="flex justify-end gap-2 px-5 py-3 bg-[#fafafa] border-t border-gray-100">
+      <button onclick="closeAddTask()" class="px-4 py-1.5 text-sm text-gray-500 hover:bg-gray-100 rounded-lg">Cancel</button>
+      <button onclick="submitTask()" class="px-4 py-1.5 text-sm bg-[#1C304E] text-white rounded-lg hover:bg-[#2a4d7a]">Add task</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- EDIT TASK MODAL -->
+<div id="edit-task-modal" class="fixed inset-0 z-50 hidden">
+  <div class="modal-bg absolute inset-0" onclick="closeEditTask()"></div>
+  <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
+    <div class="p-5">
+      <input id="edit-task-content" type="text" class="w-full text-sm border-0 outline-none font-medium mb-3">
+      <div class="flex items-center gap-2">
+        <input id="edit-task-project" type="text" list="project-list" placeholder="Client" class="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#00B2FF] w-36">
+        <select id="edit-task-priority" class="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:outline-none bg-white">
+          <option value="1">Priority 4</option>
+          <option value="3">Priority 3</option>
+          <option value="4">Priority 1</option>
+        </select>
+        <input id="edit-task-due" type="date" class="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#00B2FF]">
+      </div>
+    </div>
+    <div class="flex justify-between px-5 py-3 bg-[#fafafa] border-t border-gray-100">
+      <button onclick="deleteTask()" class="px-4 py-1.5 text-sm text-red-500 hover:bg-red-50 rounded-lg">Delete</button>
+      <div class="flex gap-2">
+        <button onclick="closeEditTask()" class="px-4 py-1.5 text-sm text-gray-500 hover:bg-gray-100 rounded-lg">Cancel</button>
+        <button onclick="saveEditTask()" class="px-4 py-1.5 text-sm bg-[#1C304E] text-white rounded-lg hover:bg-[#2a4d7a]">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CLIENT DETAIL PAGE -->
+<div id="page-detail" class="page max-w-4xl mx-auto px-8 py-8">
+  <button onclick="goBack()" class="flex items-center gap-1.5 text-sm text-gray-400 hover:text-[#00B2FF] mb-6 transition-colors">← Back to Clients</button>
+  <div class="flex items-center gap-4 mb-8">
+    <div id="detail-avatar" class="w-14 h-14 rounded-xl bg-[#1C304E] flex items-center justify-center text-white text-xl font-bold"></div>
+    <div>
+      <h1 id="detail-name" class="text-xl font-bold text-[#1C304E]"></h1>
+      <p id="detail-subtitle" class="text-sm text-gray-400"></p>
+    </div>
+  </div>
+
+  <!-- Info Grid -->
+  <section class="mb-8">
+    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Contact Information</h2>
+    <div id="detail-info" class="grid grid-cols-2 gap-x-8 gap-y-3 border-t border-gray-100 pt-4"></div>
+  </section>
+
+  <!-- Related Contacts -->
+  <section id="detail-contacts-section" class="mb-8 hidden">
+    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Contacts</h2>
+    <div id="detail-contacts" class="border-t border-gray-100"></div>
+  </section>
+
+  <!-- Tasks -->
+  <section id="detail-tasks-section" class="mb-8 hidden">
+    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Tasks</h2>
+    <div id="detail-tasks" class="border-t border-gray-100"></div>
+  </section>
+
+  <!-- Events -->
+  <section id="detail-events-section" class="mb-8 hidden">
+    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Events</h2>
+    <div id="detail-events" class="border-t border-gray-100"></div>
+  </section>
+</div>
+
+<script>
+const API = '/api';
+let TOKEN = '';
+let allEvents = [];
+let allPeople = [];
+let calWeekOffset = 0;
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById('sidebar-clock').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) + ' · ' + now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+function fmtDate(d) {
+  if (!d) return '';
+  if (typeof d === 'object') d = d.date || d.datetime || '';
+  const dt = new Date(d);
+  return isNaN(dt) ? d : dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function fmtTime(d) {
+  if (!d) return '';
+  const dt = new Date(d);
+  return isNaN(dt) ? '' : dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+
+function pClass(p) { return p === 4 ? 'p1' : p === 3 ? 'p3' : 'p4'; }
+
+function taskRow(t) {
+  const due = typeof t.due === 'object' ? (t.due?.date || '') : (t.due || '');
+  const isOverdue = due && new Date(due) < new Date() && !t.is_completed;
+  const projClick = t.project_name ? `onclick="showDetailByName('${(t.project_name||'').replace(/'/g, "\\'")}')"` : '';
+  return `<div class="task-row flex items-start gap-3 py-2.5 px-2 border-b border-gray-50 group">
+    <div class="task-check ${pClass(t.priority)} mt-0.5"></div>
+    <div class="flex-1 min-w-0">
+      <div class="text-sm text-gray-800">${t.content}</div>
+      <div class="flex items-center gap-2 mt-0.5">
+        ${t.project_name ? `<span class="text-[11px] text-gray-400 cursor-pointer hover:text-[#00B2FF]" onclick="event.stopPropagation(); showDetailByName('${t.project_name.replace(/'/g, "\\'")}')">${t.project_name}</span>` : ''}
+        ${due ? `<span class="text-[11px] ${isOverdue ? 'text-red-500' : 'text-gray-400'}">${fmtDate(due)}</span>` : ''}
+      </div>
+    </div>
+    <div class="task-actions flex items-center gap-1 shrink-0 mt-0.5">
+      <button onclick="editTask('${t.id}', this)" class="p-1 text-gray-400 hover:text-[#00B2FF] hover:bg-blue-50 rounded transition-colors" title="Edit">✎</button>
+      <button onclick="scheduleTask('${t.id}', this)" class="p-1 text-gray-400 hover:text-[#00B2FF] hover:bg-blue-50 rounded transition-colors" title="Schedule">📅</button>
+    </div>
+  </div>`;
+}
+
+function eventRow(e) {
+  const start = e.start?.dateTime || e.start?.date || '';
+  return `<div class="flex items-center gap-3 py-2.5 px-2 border-b border-gray-50 hover:bg-[#fafafa]">
+    <div class="text-center w-10 shrink-0">
+      <div class="text-[10px] font-semibold text-[#00B2FF] uppercase">${new Date(start).toLocaleDateString('en-US',{month:'short'})}</div>
+      <div class="text-base font-bold text-[#1C304E]">${new Date(start).getDate()}</div>
+    </div>
+    <div class="flex-1 min-w-0">
+      <div class="text-sm text-gray-800">${e.summary}</div>
+      <div class="text-[11px] text-gray-400">${fmtTime(start)}</div>
+    </div>
+  </div>`;
+}
+
+function clientRow(p) {
+  const escaped = JSON.stringify(p).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  return `<div class="client-row flex items-center gap-3 py-2.5 px-2 border-b border-gray-50" onclick='showDetail(${JSON.stringify(p).replace(/'/g, "&#39;")})'>
+    <div class="w-8 h-8 rounded-lg bg-[#1C304E] flex items-center justify-center text-white text-xs font-bold shrink-0">${(p.name||'?')[0].toUpperCase()}</div>
+    <div class="flex-1 min-w-0">
+      <div class="text-sm font-medium text-gray-800">${p.name}</div>
+      ${p.contact_name && p.contact_name !== p.name ? `<div class="text-[11px] text-gray-400">${p.contact_name}</div>` : ''}
+    </div>
+    <div class="text-right shrink-0">
+      ${p.email ? `<div class="text-[11px] text-gray-400">${p.email}</div>` : ''}
+      ${p.website ? `<div class="text-[11px] text-[#00B2FF]">${p.website}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+let lastPage = 'people';
+
+async function showDetail(person) {
+  // Remember which page we came from
+  const activePage = document.querySelector('.page.active');
+  if (activePage) lastPage = activePage.id.replace('page-', '');
+
+  // Switch to detail page
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-detail').classList.add('active');
+
+  // Header
+  document.getElementById('detail-avatar').textContent = (person.name||'?')[0].toUpperCase();
+  document.getElementById('detail-name').textContent = person.name;
+  document.getElementById('detail-subtitle').textContent = [person.website, person.type].filter(Boolean).join(' · ');
+
+  // Fetch detail
+  let detail = {};
+  try { const r = await fetch(API + '/client/' + encodeURIComponent(person.name)); if (r.ok) detail = await r.json(); } catch(e) {}
+  const dp = detail.person || person;
+  const tasks = detail.tasks || [];
+  const events = detail.events || [];
+  const related = detail.relatedContacts || [];
+
+  // Info grid
+  let info = '';
+  const fields = [
+    ['Contact', dp.contact_name || person.contact_name],
+    ['Email', dp.email || person.email, true],
+    ['Phone', dp.phone || person.phone, false, true],
+    ['Website', dp.website || person.website, true],
+    ['Company', dp.company || person.company],
+    ['Status', dp.status || person.status || 'active'],
+    ['Source', dp.source || person.source],
+    ['Last Active', fmtDate(dp.last_activity || person.last_activity)],
+    ['Tasks', tasks.length ? tasks.length + ' total' : null],
+    ['Type', dp.type || person.type],
+  ];
+  fields.forEach(([label, val, isLink, isPhone]) => {
+    if (!val) return;
+    let display = val;
+    if (isLink && val.includes('@')) display = `<a href="mailto:${val}" class="text-[#00B2FF] hover:underline">${val}</a>`;
+    else if (isLink) display = `<a href="https://${val}" target="_blank" class="text-[#00B2FF] hover:underline">${val}</a>`;
+    else if (isPhone) display = `<a href="tel:${val}" class="text-gray-800 hover:text-[#00B2FF]">${val}</a>`;
+    info += `<div><div class="text-[11px] text-gray-400 uppercase tracking-wider mb-0.5">${label}</div><div class="text-sm">${display}</div></div>`;
+  });
+  document.getElementById('detail-info').innerHTML = info;
+
+  // Related contacts
+  const contactsSection = document.getElementById('detail-contacts-section');
+  if (related.length > 0) {
+    contactsSection.classList.remove('hidden');
+    document.getElementById('detail-contacts').innerHTML = related.map(rc => `
+      <div class="flex items-center gap-3 py-2.5 px-2 border-b border-gray-50">
+        <div class="w-8 h-8 rounded-full bg-[#1C304E]/10 flex items-center justify-center text-[#1C304E] text-xs font-bold shrink-0">${(rc.name||'?')[0]}</div>
+        <div class="flex-1 min-w-0">
+          <div class="text-sm font-medium">${rc.name || ''}</div>
+          <div class="text-[11px] text-gray-400">${[rc.email, rc.phone, rc.company].filter(Boolean).join(' · ')}</div>
+        </div>
+        ${rc.email ? `<a href="mailto:${rc.email}" class="text-xs text-[#00B2FF] shrink-0">Email</a>` : ''}
+        ${rc.phone ? `<a href="tel:${rc.phone}" class="text-xs text-gray-500 shrink-0 ml-2">Call</a>` : ''}
+      </div>
+    `).join('');
+  } else {
+    contactsSection.classList.add('hidden');
+  }
+
+  // Tasks
+  const tasksSection = document.getElementById('detail-tasks-section');
+  if (tasks.length) {
+    tasksSection.classList.remove('hidden');
+    tasksSection.querySelector('h2').textContent = 'Tasks (' + tasks.length + ')';
+    document.getElementById('detail-tasks').innerHTML = tasks.map(t => taskRow(t)).join('');
+  } else {
+    tasksSection.classList.add('hidden');
+  }
+
+  // Events
+  const eventsSection = document.getElementById('detail-events-section');
+  if (events.length) {
+    eventsSection.classList.remove('hidden');
+    document.getElementById('detail-events').innerHTML = events.map(e => eventRow(e)).join('');
+  } else {
+    eventsSection.classList.add('hidden');
+  }
+}
+
+function showDetailByName(name) {
+  const person = allPeople.find(p => p.name?.toLowerCase() === name.toLowerCase());
+  if (person) showDetail(person);
+}
+
+function goBack() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + (lastPage || 'people')).classList.add('active');
+  // Update nav
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.remove('active');
+    if (n.dataset.page === lastPage) n.classList.add('active');
+  });
+}
+
+function closeDetail() { goBack(); }
+
+async function loadTicker() {
+  try {
+    const r = await fetch(API + '/stocks');
+    const stocks = await r.json();
+    document.getElementById('ticker').innerHTML = stocks.map(s =>
+      `<span><span class="font-medium text-gray-500">${s.symbol}</span> $${parseFloat(s.price).toFixed(2)}</span>`
+    ).join('');
+  } catch(e) {}
+}
+loadTicker(); setInterval(loadTicker, 60000);
+
+async function loadWeather() {
+  try { const r = await fetch(API + '/weather'); const w = await r.json(); document.getElementById('weather').textContent = `${w.temp} ${w.desc}`; } catch(e) {}
+}
+loadWeather();
+
+async function init() {
+  try {
+    const res = await fetch(API + '/auth/login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({password:'Oralevich101!'}) });
+    TOKEN = (await res.json()).token || '';
+  } catch(e) {}
+
+  const h = TOKEN ? { Authorization: 'Bearer ' + TOKEN } : {};
+  const get = async (p) => { try { const r = await fetch(API+p,{headers:h}); return r.ok ? r.json() : null; } catch(e) { return null; } };
+
+  const [stats, clients, tasks, events] = await Promise.all([get('/dashboard/stats'), get('/clients'), get('/tasks'), get('/calendar')]);
+  try { const pr = await fetch(API+'/people'); if (pr.ok) allPeople = await pr.json(); } catch(e) {}
+  allEvents = events || [];
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('content').style.display = 'block';
+
+  const openTasks = (tasks||[]).filter(t=>!t.is_completed).length;
+  const totalClients = allPeople.filter(p=>['client','retainer','project'].includes(p.type)).length || stats?.total_clients || 0;
+  const eventsToday = stats?.meetings_today || 0;
+
+  // Greeting
+  const hour = new Date().getHours();
+  document.getElementById('greeting').textContent = (hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening') + ', David';
+  const parts = [];
+  if (openTasks) parts.push(openTasks + ' open tasks');
+  if (eventsToday) parts.push(eventsToday + ' event' + (eventsToday>1?'s':'') + ' today');
+  parts.push(totalClients + ' clients');
+  document.getElementById('greeting-sub').textContent = parts.join(' · ');
+
+  // Sidebar stats
+  
+  
+  
+  document.getElementById('nav-client-count').textContent = totalClients;
+  document.getElementById('nav-task-count').textContent = openTasks;
+
+  // Dashboard tasks
+  document.getElementById('dash-tasks').innerHTML = (tasks||[]).filter(t=>!t.is_completed).slice(0,10).map(t=>taskRow(t)).join('') || '<p class="py-4 text-sm text-gray-400">All clear ✨</p>';
+
+  // Dashboard events
+  document.getElementById('dash-events').innerHTML = (events||[]).slice(0,6).map(e=>eventRow(e)).join('') || '<p class="py-4 text-sm text-gray-400">No upcoming events</p>';
+
+
+
+  // PEOPLE PAGE
+  const filterTypes = ['all','client','lead','family','vendor'];
+  document.getElementById('filter-tabs').innerHTML = filterTypes.map(t =>
+    `<button data-filter="${t}" class="filter-btn px-3 py-1 rounded-full text-xs font-medium transition-all ${t==='all' ? 'bg-[#1C304E] text-white' : 'text-gray-500 hover:bg-gray-100'}">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`
+  ).join('');
+
+  function renderPeople(filter) {
+    let f = allPeople;
+    if (filter && filter !== 'all') f = f.filter(p=>p.type===filter);
+    const s = document.getElementById('people-search').value.toLowerCase();
+    if (s) f = f.filter(p => (p.name||'').toLowerCase().includes(s)||(p.email||'').toLowerCase().includes(s)||(p.contact_name||'').toLowerCase().includes(s)||(p.company||'').toLowerCase().includes(s));
+    document.getElementById('people-count').textContent = f.length + ' results';
+    document.getElementById('people-list').innerHTML = f.slice(0,200).map(p=>clientRow(p)).join('');
+  }
+  renderPeople('all');
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => { b.className = 'filter-btn px-3 py-1 rounded-full text-xs font-medium transition-all text-gray-500 hover:bg-gray-100'; });
+      btn.className = 'filter-btn px-3 py-1 rounded-full text-xs font-medium transition-all bg-[#1C304E] text-white';
+      renderPeople(btn.dataset.filter);
+    });
+  });
+  document.getElementById('people-search').addEventListener('input', () => {
+    const af = document.querySelector('.filter-btn.bg-\\[\\#1C304E\\]')?.dataset.filter || 'all';
+    renderPeople(af);
+  });
+
+  // TASKS PAGE - grouped
+  const grouped = {};
+  (tasks||[]).forEach(t => { const p = t.project_name||'Other'; if (!grouped[p]) grouped[p]=[]; grouped[p].push(t); });
+  document.getElementById('tasks-grouped').innerHTML = Object.entries(grouped).map(([proj,items]) => {
+    const open = items.filter(t=>!t.is_completed);
+    if (!open.length) return '';
+    return `<div class="mb-6">
+      <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-[#1C304E]"></span> ${proj} <span class="text-gray-300">${open.length}</span>
+      </h2>
+      <div class="border-t border-gray-100">${open.map(t=>taskRow(t)).join('')}</div>
+    </div>`;
+  }).join('');
+
+  // CALENDAR
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const now = new Date();
+  now.setDate(now.getDate() + calWeekOffset * 7);
+  const mon = new Date(now);
+  mon.setDate(mon.getDate() - mon.getDay() + 1);
+  const days = [];
+  for (let i=0;i<7;i++) { const d = new Date(mon); d.setDate(d.getDate()+i); days.push(d); }
+
+  let html = '<div class="grid grid-cols-7 border border-gray-200 rounded-xl overflow-hidden">';
+  days.forEach(d => {
+    const isToday = d.toDateString() === new Date().toDateString();
+    html += `<div class="border-r border-gray-100 last:border-r-0">
+      <div class="text-center py-2 border-b border-gray-100 ${isToday ? 'bg-[#00B2FF]/5' : ''}">
+        <div class="text-[10px] text-gray-400 uppercase">${d.toLocaleDateString('en-US',{weekday:'short'})}</div>
+        <div class="text-sm font-semibold ${isToday ? 'text-[#00B2FF]' : 'text-gray-700'}">${d.getDate()}</div>
+      </div>
+      <div class="min-h-[120px] p-1.5 space-y-1">
+        ${(allEvents||[]).filter(e => {
+          const s = new Date(e.start?.dateTime || e.start?.date || '');
+          return s.toDateString() === d.toDateString();
+        }).map(e => `<div class="text-[10px] bg-[#EFF9FF] text-[#1C304E] rounded px-1.5 py-1 truncate">${e.summary}</div>`).join('')}
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('cal-grid').innerHTML = html;
+}
+
+document.getElementById('cal-prev').addEventListener('click', () => { calWeekOffset--; renderCalendar(); });
+document.getElementById('cal-next').addEventListener('click', () => { calWeekOffset++; renderCalendar(); });
+document.getElementById('cal-today').addEventListener('click', () => { calWeekOffset=0; renderCalendar(); });
+
+// Nav
+document.querySelectorAll('.nav-item').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.page').forEach(s=>s.classList.remove('active'));
+    document.getElementById('page-'+el.dataset.page).classList.add('active');
+  });
+});
+
+// Add Task
+function openAddTask() {
+  document.getElementById('add-task-modal').classList.remove('hidden');
+  document.getElementById('new-task-content').focus();
+  const projects = new Set();
+  allPeople.filter(p=>['client','retainer','project'].includes(p.type)).forEach(p=>projects.add(p.name));
+  document.getElementById('project-list').innerHTML = Array.from(projects).sort().map(p=>`<option value="${p}">`).join('');
+}
+function closeAddTask() {
+  document.getElementById('add-task-modal').classList.add('hidden');
+  document.getElementById('new-task-content').value = '';
+  document.getElementById('new-task-project').value = '';
+  document.getElementById('new-task-due').value = '';
+}
+async function submitTask() {
+  const content = document.getElementById('new-task-content').value.trim();
+  if (!content) { document.getElementById('new-task-content').focus(); return; }
+  const project = document.getElementById('new-task-project').value.trim();
+  const priority = parseInt(document.getElementById('new-task-priority').value);
+  const due = document.getElementById('new-task-due').value;
+  try {
+    const headers = { 'Content-Type': 'application/json' };
+    if (TOKEN) headers['Authorization'] = 'Bearer ' + TOKEN;
+    const r = await fetch(API + '/tasks', { method: 'POST', headers, body: JSON.stringify({ content, project_name: project || 'Other', priority, due: due || null }) });
+    const data = await r.json();
+    if (data.success) {
+      closeAddTask();
+      init();
+    } else {
+      alert('Failed: ' + (data.error || 'Unknown error'));
+    }
+  } catch(e) {
+    alert('Error adding task: ' + e.message);
+  }
+}
+
+
+let editingTaskId = null;
+
+function editTask(id, btn) {
+  event.stopPropagation();
+  editingTaskId = id;
+  // Find the task row to get current values
+  const row = btn.closest('.task-row');
+  const content = row.querySelector('.text-sm.text-gray-800')?.textContent || '';
+  const project = row.querySelector('.text-gray-400')?.textContent || '';
+  
+  document.getElementById('edit-task-content').value = content;
+  document.getElementById('edit-task-project').value = project;
+  document.getElementById('edit-task-modal').classList.remove('hidden');
+  document.getElementById('edit-task-content').focus();
+}
+
+function scheduleTask(id, btn) {
+  event.stopPropagation();
+  editingTaskId = id;
+  document.getElementById('edit-task-modal').classList.remove('hidden');
+  document.getElementById('edit-task-due').focus();
+}
+
+function closeEditTask() {
+  document.getElementById('edit-task-modal').classList.add('hidden');
+  editingTaskId = null;
+}
+
+async function saveEditTask() {
+  if (!editingTaskId) return;
+  const content = document.getElementById('edit-task-content').value.trim();
+  const project = document.getElementById('edit-task-project').value.trim();
+  const priority = parseInt(document.getElementById('edit-task-priority').value);
+  const due = document.getElementById('edit-task-due').value;
+  
+  try {
+    const r = await fetch(API + '/tasks/' + editingTaskId, {
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content, project_name: project, priority, due: due || null })
+    });
+    closeEditTask();
+    init();
+  } catch(e) {}
+}
+
+async function deleteTask() {
+  if (!editingTaskId || !confirm('Delete this task?')) return;
+  try {
+    await fetch(API + '/tasks/' + editingTaskId, {
+      method: 'DELETE',
+      headers: { 'Authorization': 'Bearer ' + TOKEN }
+    });
+    closeEditTask();
+    init();
+  } catch(e) {}
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeDetail(); closeAddTask(); closeEditTask(); }
+  if (e.key === 'Enter' && !document.getElementById('add-task-modal').classList.contains('hidden')) submitTask();
+});
+
+init();
+</script>
+</body>
+</html>
