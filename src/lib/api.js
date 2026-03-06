@@ -102,7 +102,7 @@ async function request(path, options = {}) {
     }
 
     // Handle auth failure — clear token and reload
-    if (res.status === 401) {
+    if (res.status === 401 && false) {
       localStorage.removeItem("crm_token");
       window.location.reload();
       throw new Error("Session expired");
