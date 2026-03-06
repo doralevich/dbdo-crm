@@ -1,0 +1,1330 @@
+[
+  {
+    "id": "6fpv8pF29GcwwQxh",
+    "content": "SMS mailchimp",
+    "project_name": "Raffi",
+    "priority": 2,
+    "due": {
+      "date": "2026-02-09"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": "RAFFI NOTES"
+  },
+  {
+    "id": "6fpv8mC9VcHVH7G9",
+    "content": "You may also like in cart/checkout",
+    "project_name": "Raffi",
+    "priority": 2,
+    "due": {
+      "date": "2026-02-11"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": "ToDo"
+  },
+  {
+    "id": "6fpvw5QQwfr8Rqm9",
+    "content": "Add Sorting on Product Page",
+    "project_name": "Raffi",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": "ToDo"
+  },
+  {
+    "id": "6g56WFF2PRR8W7cg",
+    "content": "Fix Raffi Online gift card email design (logo and layout); provide PDF option",
+    "project_name": "Raffi",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fpvw4WmccRMM5g9",
+    "content": "Kareen to review mart Recognitions - Referral from Ely",
+    "project_name": "Raffi",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": "RAFFI NOTES"
+  },
+  {
+    "id": "6f4FwfHP99wH7Vg9",
+    "content": "I saw this Checkout Validator App, be good for PO Boxes (not allowing)",
+    "project_name": "Raffi",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": "RAFFI NOTES"
+  },
+  {
+    "id": "69xqjv2v25269M59",
+    "content": "Can you see if you can get me access to your [register.com](http://register.com) account",
+    "project_name": "Raffi",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": "RAFFI NOTES"
+  },
+  {
+    "id": "6RmqPhggHXpRWVFh",
+    "content": "Raffi Online search results",
+    "project_name": "Raffi",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": "RAFFI NOTES"
+  },
+  {
+    "id": "6c6GxV7r2RFWFgH9",
+    "content": "drop down ideas/ categories: 19th hole, shop the occasion, shop the look, the gift guide",
+    "project_name": "Raffi",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": "RAFFI NOTES"
+  },
+  {
+    "id": "6c73Rff8FmcMfvg9",
+    "content": "journey mailer for purchase - noah, lafayette, linden sherwood - to try the bundle",
+    "project_name": "Raffi",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": "RAFFI NOTES"
+  },
+  {
+    "id": "6cvqh6P8528vCRH9",
+    "content": "sale - let's review returns for this to be store credit / even exchange..",
+    "project_name": "Raffi",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": "RAFFI NOTES"
+  },
+  {
+    "id": "6f84gfGCcJhvRX59",
+    "content": "emails going to peoples spam - need to review next call and check",
+    "project_name": "Raffi",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": "RAFFI NOTES"
+  },
+  {
+    "id": "6f9hmQMCVCH2hHmh",
+    "content": "need to photograph - next shoot",
+    "project_name": "Raffi",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": "RAFFI NOTES"
+  },
+  {
+    "id": "6g5h9F53Qh8fP9V8",
+    "content": "Add .env file with proper credentials on XCloud (server 41015, site 197491) and verify",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-02-28"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g5mmCPjwjprm4P8",
+    "content": "remove pure care iv pagepaye workers comp",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-02-28"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g66Gw2xPfMpj5Wg",
+    "content": "Resolve Smash Balloon Instagram Feed Pro vulnerability on jempradio.com",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-01"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g66cvmFCpHFppPg",
+    "content": "Add 'Documents' tab back to Supplier Dashboard in WePurchIt",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-01"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g5HHcrJpWFc8jCg",
+    "content": "Here's your gift card review.",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g5HP6P7XgvJHvgg",
+    "content": "Check Gelber & Mundy website — photos not showing",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g5cJhcv44FJcCHg",
+    "content": "SkinNY - Could you please create a new page titled \"Injectables\" next to the Facials and Body Treatments sections? Please set it up using the same layout as the Body Treatments page, but leave the services empty for now so I can fill them in later.",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g5fxGXQgvGqx9g8",
+    "content": "Review cigarsinparadise.com and send content changes/suggestions by Monday",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6C2GrQcjCXgpPg",
+    "content": "Review Cart Drawer setup in the preview theme and send feedback to Karishma",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6FPwpGhmVw8x2g",
+    "content": "Reply with feedback on CIP banner ad headline/copy",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6FgQw3VXXqGcQg",
+    "content": "Update Lisandra Gatson’s headshot on the site/profile using the photo Danielle forwarded",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6Gcm4HM5mr5xH8",
+    "content": "Peach Plumbing",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g6GrC87jX6vPCrg",
+    "content": "Heera - Please find the size guide images attached in JPG format as requested.",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g6GrJ8X9J6hfp98",
+    "content": "Heera I have attached the content for the Warranty page",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g6GrpCFH4J9vj2g",
+    "content": "Finish subscriptions updates by Monday",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6HRqcm86f2mf5g",
+    "content": "Review Danielle's photo and adjust coloring/neck (or recreate similar to original); reply",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g64m2C59jW26Jqg",
+    "content": "Investigate and respond to Hetzner abuse report (IP 178.156.188.162)",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-03"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6FWG7WHrhp2Gcg",
+    "content": "Confirm time with Mark for tomorrow afternoon review call (Shopify spreadsheet: pricing + barcodes)",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-03"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6M75XWF9HPJ93g",
+    "content": "Pull back/crop Lisandra & Danielle headshots (if possible) and confirm",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-03"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6MJjpVrMXh6v78",
+    "content": "Apply CIP website updates from Barry: copy, itinerary, logos; add seminar note; investigate 'jumpy' behavior",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-03"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6PF2vJQ9cxJ6Wg",
+    "content": "Send quote for green Pax vase to Dirk Gheysens",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-03"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6QH8XJ8wWMgwV8",
+    "content": "Follow up with Rocky on hosting/security; verify Updraft backups",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-03"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6Qx9Gf4W5RGqPg",
+    "content": "Schedule call with Michael Andreev (DTEAM) about white-label partnership",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-03"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6R5FX7wGG3vpX8",
+    "content": "Update website with new pharmacy refill link",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-03"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6RGmxvx64X37rg",
+    "content": "Schedule call with Vincent to finalize Shopify inventory sync and plan API setup",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-03"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6Rmm82MgRhxGwg",
+    "content": "Confirm go-ahead for Karishma to add Cart Drawer upsell on the live site",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-03"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6V7PXWrjgq5Pjg",
+    "content": "Investigate and resolve website issue; update Howard",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-03"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6XGVhHxJ2vcxr8",
+    "content": "Add screenshots 24–37 to Dropbox",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-03"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6crVP3gpj7RfF8",
+    "content": "Review the shared 'Website content' doc and send your thoughts/integration plan",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-04"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6gRxMHW4FJ2VHg",
+    "content": "Investigate and fix xCloud backup failure for ardenclaims.com (S3 connection issue)",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-04"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6h6w99mj46PRv8",
+    "content": "Bring back Laura Giacobbi’s headshot on the website (revert to previous)",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-04"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6j3GcqvC4mfvv8",
+    "content": "Schedule flu test house call for Julia Weidinger today",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-04"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6j6XGWW87GcRp8",
+    "content": "Restore Laura Giacobbi’s headshot on the website (bring hers back).",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-04"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6j6XHHfmHCfw68",
+    "content": "Update Cigars In Paradise Festival site: change dates to June 25–28, add promo code field, add CdC Reservations phone 855-657-5955, direct event email to Reservations (not Tee-Times).",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-04"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6j7PFpM9vP29Rg",
+    "content": "Arrange flu test home visit for Julia Weidinger today",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-04"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6j7Pg5F8m5JmCg",
+    "content": "Review 'Website content' doc and share integration feedback",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-04"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6393GrRPCQChq8",
+    "content": "Review and pay Invoice #4197 from James Konatich Designs ($75)",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-30"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6RX6M6cxC6Ff28",
+    "content": "Confirm Shopify Markets upgrade and app compatibility before Apr 1, 2026",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": {
+      "date": "2026-04-01"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6fp8rh4hM5PMF598",
+    "content": "Israel Cousins",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g47H65GFF76G2mg",
+    "content": "Follow up with Steve Shapiro regarding his website",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g4Jc2V4hq7cvQ7g",
+    "content": "Follow up with Guetta Building regarding website updates",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g56GmJWqPxfMg68",
+    "content": "Follow up with Theresa’s - Center Cuts...she wants access to update site content (upload files, edit store hours, post closures)",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g5HGx7XRJq2c868",
+    "content": "RJ Industries - Review the Current Projects and make updates accordingly.",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g5X9vvCWpJwhXH8",
+    "content": "Implement mobile CSS fix to prevent overlapping button in Divi Supreme card module",
+    "project_name": "Inbox",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g6M4PMxWP84x8M8",
+    "content": "Fix Peach Plumbing website button — upper right \"Book Appointment\" → tel:404-333-1611",
+    "project_name": "Inbox",
+    "priority": 3,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g5MqRxxM4pvjWpg",
+    "content": "Schedule call with Michael Emmert for Monday",
+    "project_name": "GoldenEye Construction",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6fhg43M6WpMV5mFP",
+    "content": "Completed and Current Projects - when you go to the drop arrow you get the list of projects, but there are a few that you can't click on (i.e. you don't get the hand).",
+    "project_name": "RJ Industries",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": "To Do"
+  },
+  {
+    "id": "6fhg43QmVwr3p52P",
+    "content": "On the Map - click hunts point (Bronx) and when you click \"learn more\" it does not take you to the project page.",
+    "project_name": "RJ Industries",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": "To Do"
+  },
+  {
+    "id": "6fWgpph6526HfpjV",
+    "content": "Jordan will send over the size of the box",
+    "project_name": "Eyeglasses Forever",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g2FPqRphv9PjwF3",
+    "content": "Teach Jordan/Rachel about What's Trending / how to add products",
+    "project_name": "Eyeglasses Forever",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fMpRRf79HhMm7JQ",
+    "content": "David will take out Why Train With Us Icons on the Home page",
+    "project_name": "Bodyologist",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fMpRRmg3WWHW62x",
+    "content": "David to add videos on home page - Carisa to see if she has a 3rd video.\\",
+    "project_name": "Bodyologist",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fMpRRhm4CwFp26x",
+    "content": "Meet Carisa - Carisa to send updated content - Give some bullets; and accreditations/certificates",
+    "project_name": "Bodyologist",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fMpXVJM6x45733x",
+    "content": "Check Smash Balloon Plugin for Youtube and Instagram Integration",
+    "project_name": "Bodyologist",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g47p3hrVXfq5CJg",
+    "content": "Prepare Evermore subscriptions overview and next steps",
+    "project_name": "Evermore.org",
+    "priority": 2,
+    "due": {
+      "date": "2026-02-28"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g5HP84HGp6x9H7g",
+    "content": "Finish subscriptions work and deliver to Joyal by Monday",
+    "project_name": "Evermore.org",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6fh7HMxxFghvvf7V",
+    "content": "To update Firewall with Sucuri",
+    "project_name": "Evermore.org",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fqpwPm3Rgjq97MV",
+    "content": "WAF Service through Sucuri",
+    "project_name": "Evermore.org",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g332rhGVXxX97H5",
+    "content": "Can you make the items in the middle of the page scroll to their section on the bottom of the page / anchor - [C-Suite Solutions | Critical Path Advisors](https://stagingcriticaladv.dbdodev.com/what-we-do/c-suite-solutions/)",
+    "project_name": "Critical Path Advisors",
+    "priority": 2,
+    "due": {
+      "date": "2026-02-16"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fhcgpFM569XJXqM",
+    "content": "Create MTA Group - Who gets free Shipping - Tagging customers",
+    "project_name": "SquareHW",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fhcgqRrfCq6m78v",
+    "content": "Tier 's create a product as a subscription/monthly recurring",
+    "project_name": "SquareHW",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fq7rfgm347fwQ6M",
+    "content": "Create Brands Page",
+    "project_name": "SquareHW",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g3wRHp3CwxPV9mv",
+    "content": "Categorize existing imagery",
+    "project_name": "SquareHW",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g4v934gm9R724gv",
+    "content": "Follow up with Stephanie re Mudpie and next steps",
+    "project_name": "SquareHW",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fhcv42hCVWg7RJV",
+    "content": "3 Suits for $249",
+    "project_name": "Karako",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fhcv3x7q4G6frmV",
+    "content": "3 for $119 100% Cotton Shirts",
+    "project_name": "Karako",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fhcv433GM37qXHV",
+    "content": "3 Silk Ties for $99",
+    "project_name": "Karako",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fhcv43fgWgPp95V",
+    "content": "3 Microfiber Ties for $60",
+    "project_name": "Karako",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fhcv45cP3rMqhxV",
+    "content": "3 Suits for $299",
+    "project_name": "Karako",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fhcv44XCHQ438rV",
+    "content": "3 Dress Pants for $50",
+    "project_name": "Karako",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fhcv457f2P87pm3",
+    "content": "3 Ties for $40",
+    "project_name": "Karako",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fhcv4949Xf6GFx3",
+    "content": "Casual Bundle",
+    "project_name": "Karako",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fhcv4CQRm7HwrqV",
+    "content": "3 Sport Jackets for $189",
+    "project_name": "Karako",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fhcv496v2xpR7QV",
+    "content": "3 Dress Shirts for $59",
+    "project_name": "Karako",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fhcv48fxXxQPcC3",
+    "content": "3 Shirts + 3 Ties for $99",
+    "project_name": "Karako",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fhcv4FQfVJxr8G3",
+    "content": "3 FUBU Suits for $599",
+    "project_name": "Karako",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g475VP2xfWGXrM8",
+    "content": "Please update items",
+    "project_name": "Vacuum America Clean",
+    "priority": 2,
+    "due": {
+      "date": "2026-02-21"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fp2M3RmrPMphx8g",
+    "content": "Connect with their IT people regarding integrating their backend? It's a UNIX",
+    "project_name": "Vacuum America Clean",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fp2M6FvXMcCX88g",
+    "content": "For B2B",
+    "project_name": "Vacuum America Clean",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fp2MHfXgmPg4mhg",
+    "content": "Setup Standard B2C Site",
+    "project_name": "Vacuum America Clean",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fp2MQWrM8Q3wvm8",
+    "content": "For B2B Freight will be quoted/billed separately",
+    "project_name": "Vacuum America Clean",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fp2MRPCprGHJ7rg",
+    "content": "Integrate MailChimp",
+    "project_name": "Vacuum America Clean",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fp2MxWxmV8R69XF",
+    "content": "Create Bulldog Buddies Page",
+    "project_name": "Advantage All",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fp2P85ffjj7FGpF",
+    "content": "Courting Corporate Sponsorship - Coach to give me information on this",
+    "project_name": "Advantage All",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fq8MxwfH7V8x7hC",
+    "content": "Chris will send Timeline information",
+    "project_name": "Superior Uniform Rentals",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fq8P2pM5XjWP77j",
+    "content": "Chris will send Bio information",
+    "project_name": "Superior Uniform Rentals",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fxcGRVRQHwf9Qjm",
+    "content": "Text for Customize Your Own",
+    "project_name": "Heera Jewelry",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g5HpqMqWvfm2Xj8",
+    "content": "Heera make play button on videos #757575",
+    "project_name": "Heera Jewelry",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g5HF5fh4qCQg358",
+    "content": "Switch apps to annual billing (customized button + collection filtering)",
+    "project_name": "Heera Jewelry",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [
+      "email"
+    ],
+    "section": ""
+  },
+  {
+    "id": "6g4hgCmGJM2MJ5xH",
+    "content": "Follow up with Warren / Dana",
+    "project_name": "Planning for the Unexpected",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g3vcf32vRfJ2FV8",
+    "content": "Follow up with Shastone about chatbox",
+    "project_name": "Shastone Memorial",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6fxqgC6rgWXxPP2F",
+    "content": "Please update Sort By on the product page it's not working",
+    "project_name": "Raffi - Team",
+    "priority": 4,
+    "due": {
+      "date": "2026-02-20"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": "To-Do"
+  },
+  {
+    "id": "6g3w4MxvGp7R6328",
+    "content": "Rachel will send updated Josh picture",
+    "project_name": "Scheinman Neutrals",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g3w4JH6pwwrQrf8",
+    "content": "Rachel will find out about legal on how to add the blog posts",
+    "project_name": "Scheinman Neutrals",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g3vx85FMj7WJgp8",
+    "content": "Scheinman - New Law Firms Rachel to send",
+    "project_name": "Scheinman Neutrals",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g3vxH3537wxFQF8",
+    "content": "Scheinman - Add Biography Page",
+    "project_name": "Scheinman Neutrals",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g3vxJPW39Gvh6q8",
+    "content": "Scheinman add - Patrick and Josh (in that order)",
+    "project_name": "Scheinman Neutrals",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g3w47V9Hpq5hFV8",
+    "content": "Scheinman - Update site with gallery images Rachel Sends",
+    "project_name": "Scheinman Neutrals",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g3w3M5Vj4CXFWv8",
+    "content": "Scheinman - update staging site with live site copy and paste prominent cases in the media=",
+    "project_name": "Scheinman Neutrals",
+    "priority": 2,
+    "due": null,
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6g5cHR7QW3qx2JXR",
+    "content": "Start Building Website",
+    "project_name": "Royal Ice",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": ""
+  },
+  {
+    "id": "6f9wWqqHJPJgP78M",
+    "content": "Get Content from Yudit",
+    "project_name": "Compu Care",
+    "priority": 2,
+    "due": {
+      "date": "2026-03-02"
+    },
+    "is_completed": false,
+    "labels": [],
+    "section": "To-Do"
+  }
+]

@@ -1,0 +1,99 @@
+[
+  {
+    "id": "a1",
+    "name": "David Oralevich",
+    "role": "Owner / Creative Director",
+    "avatar": "DO",
+    "status": "active",
+    "current_tasks": [],
+    "active_clients": [
+      "All clients"
+    ]
+  },
+  {
+    "id": "a2",
+    "name": "Donna",
+    "role": "Chief of Staff — AI Agent",
+    "avatar": "DP",
+    "status": "active",
+    "current_tasks": [
+      "Operations",
+      "Team coordination",
+      "Client follow-ups"
+    ],
+    "active_clients": [
+      "All clients"
+    ]
+  },
+  {
+    "id": "a3",
+    "name": "Eitan",
+    "role": "Frontend Development",
+    "avatar": "EI",
+    "status": "active",
+    "current_tasks": [
+      "CSS/JS learning",
+      "Divi 5 mastery"
+    ],
+    "active_clients": []
+  },
+  {
+    "id": "a4",
+    "name": "Ari",
+    "role": "Backend Development",
+    "avatar": "AR",
+    "status": "active",
+    "current_tasks": [
+      "CRM API",
+      "Server management"
+    ],
+    "active_clients": []
+  },
+  {
+    "id": "a5",
+    "name": "Talia",
+    "role": "Content & Marketing",
+    "avatar": "TA",
+    "status": "active",
+    "current_tasks": [
+      "HN post",
+      "Product Hunt copy"
+    ],
+    "active_clients": []
+  },
+  {
+    "id": "a6",
+    "name": "Shira",
+    "role": "Design & Visuals",
+    "avatar": "SH",
+    "status": "active",
+    "current_tasks": [
+      "Product Hunt visuals",
+      "Social media kit"
+    ],
+    "active_clients": []
+  },
+  {
+    "id": "a7",
+    "name": "Yael",
+    "role": "Client Management",
+    "avatar": "YA",
+    "status": "active",
+    "current_tasks": [
+      "Client audits",
+      "Task tracking"
+    ],
+    "active_clients": []
+  },
+  {
+    "id": "a8",
+    "name": "Lior",
+    "role": "Research & Analytics",
+    "avatar": "LI",
+    "status": "active",
+    "current_tasks": [
+      "Research tasks"
+    ],
+    "active_clients": []
+  }
+]
