@@ -78,10 +78,19 @@ async function fetchStaticFallback(path) {
   throw new Error(`No data available for ${path}`);
 }
 
+function getAuthHeaders() {
+  const token = localStorage.getItem("crm_token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 async function request(path, options = {}) {
   try {
     const res = await fetch(`${API_BASE}${path}`, {
-      headers: { "Content-Type": "application/json", ...options.headers },
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeaders(),
+        ...options.headers,
+      },
       ...options,
     });
 
@@ -92,12 +101,20 @@ async function request(path, options = {}) {
       return fetchStaticFallback(path);
     }
 
+    // Handle auth failure — clear token and reload
+    if (res.status === 401) {
+      localStorage.removeItem("crm_token");
+      window.location.reload();
+      throw new Error("Session expired");
+    }
+
     if (!res.ok) {
       const error = await res.json().catch(() => ({ message: res.statusText }));
       throw new Error(error.message || `API error: ${res.status}`);
     }
     return res.json();
   } catch (err) {
+    if (err.message === "Session expired") throw err;
     // Network error or API down — try fallback chain
     console.warn(`[CRM] API request failed for ${path} — using fallback data`);
     return fetchStaticFallback(path);
@@ -150,12 +167,16 @@ export const fetchEvents = (params) => {
   const qs = params ? `?${new URLSearchParams(params)}` : "";
   return request(`/calendar${qs}`);
 };
+export const syncCalendar = () => request("/calendar/sync");
+export const fetchClientEvents = (clientId) =>
+  request(`/calendar/client/${clientId}`);
 
 // Contacts (Google)
 export const fetchContacts = (params) => {
   const qs = params ? `?${new URLSearchParams(params)}` : "";
   return request(`/contacts${qs}`);
 };
+export const syncContacts = () => request("/contacts/sync");
 export const updateContactCategory = (id, category) =>
   request(`/contacts/${id}/category`, {
     method: "PATCH",

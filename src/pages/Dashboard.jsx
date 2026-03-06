@@ -12,6 +12,7 @@ import {
   Clock,
   Circle,
   Star,
+  Eye,
 } from "lucide-react";
 import StatCard from "../components/StatCard";
 import Card, { CardHeader, CardTitle } from "../components/Card";
@@ -55,6 +56,7 @@ export default function Dashboard() {
   const urgentTasks = [...overdueTasks, ...todayTasks].slice(0, 5);
   const importantEmails = emails.filter((e) => !e.is_read || e.is_important).slice(0, 4);
   const upcomingEvents = events.slice(0, 4);
+  const needsAttention = stats?.needs_attention || [];
 
   return (
     <div className="space-y-6">
@@ -88,14 +90,9 @@ export default function Dashboard() {
           icon={DollarSign}
         />
         <StatCard
-          label="Overdue Tasks"
-          value={stats?.overdue_tasks || overdueTasks.length}
-          icon={AlertTriangle}
-          className={
-            (stats?.overdue_tasks || overdueTasks.length) > 0
-              ? "border-red-500/30"
-              : ""
-          }
+          label="Meetings Today"
+          value={stats?.meetings_today || 0}
+          icon={CalendarDays}
         />
       </div>
 
@@ -132,10 +129,10 @@ export default function Dashboard() {
                       className={cn(
                         "mt-0.5 h-2 w-2 shrink-0 rounded-full",
                         task.priority === 4
-                          ? "bg-red-400"
+                          ? "bg-red-500"
                           : task.priority === 3
-                          ? "bg-orange-400"
-                          : "bg-blue-400"
+                          ? "bg-orange-500"
+                          : "bg-blue-500"
                       )}
                     />
                     <div className="min-w-0 flex-1">
@@ -147,7 +144,7 @@ export default function Dashboard() {
                           {task.project_name}
                         </span>
                         {isOverdue && (
-                          <Badge className="text-red-400 bg-red-400/10">
+                          <Badge className="text-red-600 bg-red-100">
                             Overdue
                           </Badge>
                         )}
@@ -181,9 +178,9 @@ export default function Dashboard() {
               </p>
             ) : (
               upcomingEvents.map((event) => {
-                const start = new Date(event.start.dateTime);
-                const isToday =
-                  start.toDateString() === new Date().toDateString();
+                const startDt = event.start?.dateTime || event.start?.date;
+                const start = startDt ? new Date(startDt) : null;
+                const isToday = start && start.toDateString() === new Date().toDateString();
                 return (
                   <div
                     key={event.id}
@@ -193,12 +190,12 @@ export default function Dashboard() {
                       <span className="text-[10px] uppercase text-text-muted font-medium">
                         {isToday
                           ? "Today"
-                          : start.toLocaleDateString("en-US", {
-                              weekday: "short",
-                            })}
+                          : start
+                          ? start.toLocaleDateString("en-US", { weekday: "short" })
+                          : ""}
                       </span>
                       <span className="text-xs text-text-secondary font-medium">
-                        {formatTime(event.start.dateTime)}
+                        {startDt ? formatTime(startDt) : ""}
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
@@ -218,8 +215,42 @@ export default function Dashboard() {
           </div>
         </Card>
 
+        {/* Clients Needing Attention */}
+        {needsAttention.length > 0 && (
+          <Card>
+            <CardHeader className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Eye className="h-4 w-4 text-amber-500" />
+                <CardTitle>Needs Attention</CardTitle>
+              </div>
+              <Link
+                to="/clients"
+                className="flex items-center gap-1 text-xs text-text-muted hover:text-brand-gold transition-colors"
+              >
+                View all <ArrowRight className="h-3 w-3" />
+              </Link>
+            </CardHeader>
+            <div className="space-y-3">
+              {needsAttention.map((client) => (
+                <Link
+                  key={client.id}
+                  to={`/clients/${client.id}`}
+                  className="flex items-center justify-between rounded-lg border border-border-subtle p-3 hover:border-brand-gold/30 transition-colors"
+                >
+                  <span className="text-sm font-medium text-text-primary">
+                    {client.name}
+                  </span>
+                  <Badge className={client.days_quiet >= 60 ? "text-red-600 bg-red-100" : "text-amber-600 bg-amber-100"}>
+                    {client.days_quiet}d quiet
+                  </Badge>
+                </Link>
+              ))}
+            </div>
+          </Card>
+        )}
+
         {/* Recent Emails */}
-        <Card className="lg:col-span-2">
+        <Card className={needsAttention.length > 0 ? "" : "lg:col-span-2"}>
           <CardHeader className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-brand-gold" />
@@ -250,7 +281,7 @@ export default function Dashboard() {
                     <Circle
                       className={cn(
                         "h-2 w-2",
-                        !email.is_read ? "text-blue-400 fill-blue-400" : "text-transparent"
+                        !email.is_read ? "text-blue-500 fill-blue-500" : "text-transparent"
                       )}
                     />
                   )}

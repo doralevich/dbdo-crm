@@ -1,18 +1,5 @@
 import { useState } from "react";
 
-// SHA-256 hash of the password for client-side validation
-// This is a basic gate — for production, use server-side auth
-const VALID_HASH = "8ff45e622b068d975d63e24a71ff93adf156e218d21c5261a3ba9e94645a0b8e";
-
-async function hashPassword(password) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const buffer = await crypto.subtle.digest("SHA-256", data);
-  return Array.from(new Uint8Array(buffer))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-}
-
 export default function Login({ onLogin }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -24,27 +11,39 @@ export default function Login({ onLogin }) {
     setLoading(true);
 
     try {
-      const hash = await hashPassword(password);
-      if (hash === VALID_HASH) {
-        localStorage.setItem("crm_token", hash);
-        onLogin(hash);
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+
+      const data = await res.json();
+
+      if (data.success && data.token) {
+        localStorage.setItem("crm_token", data.token);
+        onLogin(data.token);
       } else {
-        setError("Invalid password");
+        setError(data.message || "Invalid password");
       }
     } catch {
-      setError("Authentication error");
+      setError("Server unavailable — check connection");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-surface-raised flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 shadow-xl">
+        <div className="bg-surface border border-border-subtle rounded-2xl p-8 shadow-xl">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-white mb-1">Donna CRM</h1>
-            <p className="text-zinc-400 text-sm">DBDO — Authorized Access Only</p>
+            <div className="flex justify-center mb-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-gold font-bold text-brand-navy text-lg">
+                D
+              </div>
+            </div>
+            <h1 className="text-2xl font-bold text-text-primary mb-1">Donna CRM</h1>
+            <p className="text-text-muted text-sm">DBDO Agency - Authorized Access Only</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -54,21 +53,21 @@ export default function Login({ onLogin }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter password"
-                className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-surface-raised border border-border-default rounded-lg text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent"
                 autoFocus
               />
             </div>
 
             {error && (
-              <p className="text-red-400 text-sm text-center">{error}</p>
+              <p className="text-red-500 text-sm text-center">{error}</p>
             )}
 
             <button
               type="submit"
               disabled={loading || !password}
-              className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
+              className="w-full py-3 bg-brand-gold hover:bg-brand-gold-light disabled:opacity-50 disabled:cursor-not-allowed text-brand-navy font-medium rounded-lg transition-colors"
             >
-              {loading ? "Authenticating..." : "Sign In"}
+              {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
         </div>

@@ -5,19 +5,19 @@
   --color-brand-gold: #D4A843;
   --color-brand-gold-light: #E8C872;
   --color-brand-gold-dark: #B8922F;
-  --color-brand-navy: #0F1729;
+  --color-brand-navy: #111318;
   --color-brand-navy-light: #1A2540;
   --color-brand-navy-lighter: #243052;
 
-  /* Semantic */
-  --color-surface: #111827;
-  --color-surface-raised: #1F2937;
-  --color-surface-overlay: #283344;
-  --color-border-subtle: #1F2937;
-  --color-border-default: #374151;
-  --color-text-primary: #F9FAFB;
-  --color-text-secondary: #9CA3AF;
-  --color-text-muted: #6B7280;
+  /* Light theme semantic */
+  --color-surface: #FFFFFF;
+  --color-surface-raised: #F4F5F7;
+  --color-surface-overlay: #E8EAF0;
+  --color-border-subtle: #E5E7EB;
+  --color-border-default: #D1D5DB;
+  --color-text-primary: #111318;
+  --color-text-secondary: #4B5563;
+  --color-text-muted: #9CA3AF;
 
   --font-family-sans: "Inter", system-ui, -apple-system, sans-serif;
 }
@@ -31,18 +31,20 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #374151;
+  background: #D1D5DB;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #4B5563;
+  background: #9CA3AF;
 }
 
-/* Smooth transitions */
 * {
-  scrollbar-color: #374151 transparent;
+  scrollbar-color: #D1D5DB transparent;
 }
 
 body {
   font-family: var(--font-family-sans);
+  font-size: 15px;
+  color: #111318;
+  background: #F4F5F7;
 }

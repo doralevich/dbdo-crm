@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { getGoogleContacts, refreshGoogleToken } from "../lib/google.js";
+import { getGoogleContacts } from "../lib/google.js";
+import { supabase } from "../lib/supabase.js";
+import { syncContacts, getLastContactsSyncTime } from "../lib/sync-contacts.js";
 import { mockContacts } from "../lib/mock-data.js";
 
 const router = Router();
 
-// Category keywords for auto-categorization
 const CATEGORY_RULES = {
   Clients: {
     orgKeywords: [
@@ -23,10 +24,7 @@ const CATEGORY_RULES = {
   },
   Family: {
     labelKeywords: ["family", "relative"],
-    // Will also match known family names from MEMORY.md
-    namePatterns: [
-      "oralevich", "jill", "noah", "ben",
-    ],
+    namePatterns: ["oralevich", "jill", "noah", "ben"],
   },
   Friends: {
     labelKeywords: ["friend", "personal", "social"],
@@ -35,25 +33,13 @@ const CATEGORY_RULES = {
 
 function categorizeContact(contact) {
   const name = (contact.name || "").toLowerCase();
-  const org = (contact.organization || "").toLowerCase();
-  const labels = (contact.labels || []).map((l) => l.toLowerCase());
+  const org = (contact.company || contact.organization || "").toLowerCase();
   const email = (contact.email || "").toLowerCase();
 
-  // Check Google contact group memberships first
-  for (const label of labels) {
-    for (const [category, rules] of Object.entries(CATEGORY_RULES)) {
-      if (rules.labelKeywords?.some((kw) => label.includes(kw))) {
-        return category;
-      }
-    }
-  }
-
-  // Check family name patterns
   if (CATEGORY_RULES.Family.namePatterns?.some((p) => name.includes(p))) {
     return "Family";
   }
 
-  // Check organization keywords
   if (org) {
     for (const [category, rules] of Object.entries(CATEGORY_RULES)) {
       if (rules.orgKeywords?.some((kw) => org.includes(kw))) {
@@ -62,15 +48,11 @@ function categorizeContact(contact) {
     }
   }
 
-  // Check email domain patterns
   if (email) {
     const domain = email.split("@")[1] || "";
-    // Common personal email domains -> Friends or Other
     if (["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "aol.com", "icloud.com", "me.com"].includes(domain)) {
-      // Personal email — could be friend or family, default to Other unless other signals
       return "Other";
     }
-    // Business domain -> likely Client or Vendor
     return "Clients";
   }
 
@@ -87,10 +69,7 @@ function normalizeGoogleContact(person) {
 
   const labels = memberships
     .filter((m) => m.contactGroupMembership?.contactGroupResourceName)
-    .map((m) => {
-      const name = m.contactGroupMembership.contactGroupResourceName;
-      return name.replace("contactGroups/", "");
-    });
+    .map((m) => m.contactGroupMembership.contactGroupResourceName.replace("contactGroups/", ""));
 
   const contact = {
     id: person.resourceName?.replace("people/", "") || "",
@@ -116,16 +95,68 @@ function normalizeGoogleContact(person) {
 // GET /api/contacts
 router.get("/", async (req, res) => {
   try {
+    const { category, q } = req.query;
+
+    // Try Supabase cached contacts first
+    if (supabase) {
+      let query = supabase.from("contacts").select("*").order("name");
+
+      if (q) {
+        query = query.or(`name.ilike.%${q}%,email.ilike.%${q}%,company.ilike.%${q}%`);
+      }
+
+      const { data: dbContacts, error } = await query;
+
+      if (!error && dbContacts && dbContacts.length > 0) {
+        const normalized = dbContacts.map((c) => ({
+          id: c.google_resource_name?.replace("people/", "") || c.id,
+          name: c.name || "",
+          email: c.email || "",
+          phone: c.phone || "",
+          organization: c.company || "",
+          company: c.company || "",
+          title: c.title || "",
+          photo_url: c.photo_url || "",
+          client_id: c.client_id,
+          category: categorizeContact(c),
+          source: "supabase",
+          synced_at: c.synced_at,
+        }));
+
+        let filtered = normalized;
+        if (category && category !== "all") {
+          filtered = filtered.filter(
+            (c) => c.category.toLowerCase() === category.toLowerCase()
+          );
+        }
+
+        const stats = {
+          total: normalized.length,
+          clients: normalized.filter((c) => c.category === "Clients").length,
+          friends: normalized.filter((c) => c.category === "Friends").length,
+          family: normalized.filter((c) => c.category === "Family").length,
+          vendors: normalized.filter((c) => c.category === "Vendors").length,
+          other: normalized.filter((c) => c.category === "Other").length,
+        };
+
+        return res.json({
+          contacts: filtered,
+          stats,
+          source: "supabase",
+          last_sync: getLastContactsSyncTime(),
+        });
+      }
+    }
+
+    // Fall back to live Google API
     const contacts = await getGoogleContacts();
 
     if (contacts) {
       const normalized = contacts
         .map(normalizeGoogleContact)
-        .filter((c) => c.name) // Skip contacts without names
+        .filter((c) => c.name)
         .sort((a, b) => a.name.localeCompare(b.name));
 
-      // Apply category filter
-      const { category, q } = req.query;
       let filtered = normalized;
 
       if (category && category !== "all") {
@@ -145,7 +176,6 @@ router.get("/", async (req, res) => {
         );
       }
 
-      // Summary stats
       const stats = {
         total: normalized.length,
         clients: normalized.filter((c) => c.category === "Clients").length,
@@ -159,7 +189,6 @@ router.get("/", async (req, res) => {
     }
 
     // Fall back to mock data
-    const { category, q } = req.query;
     let filtered = mockContacts;
 
     if (category && category !== "all") {
@@ -174,7 +203,7 @@ router.get("/", async (req, res) => {
         (c) =>
           c.name.toLowerCase().includes(search) ||
           c.email.toLowerCase().includes(search) ||
-          c.organization.toLowerCase().includes(search) ||
+          (c.organization || "").toLowerCase().includes(search) ||
           c.phone.includes(search)
       );
     }
@@ -195,15 +224,23 @@ router.get("/", async (req, res) => {
   }
 });
 
-// PATCH /api/contacts/:id/category — manually recategorize a contact
+// GET /api/contacts/sync — trigger manual sync
+router.get("/sync", async (req, res) => {
+  try {
+    const result = await syncContacts();
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// PATCH /api/contacts/:id/category
 router.patch("/:id/category", async (req, res) => {
   const { category } = req.body;
   const validCategories = ["Clients", "Friends", "Family", "Vendors", "Other"];
   if (!validCategories.includes(category)) {
     return res.status(400).json({ message: "Invalid category" });
   }
-  // In a full implementation, this would persist to Supabase
-  // For now, acknowledge the change
   res.json({ id: req.params.id, category, updated: true });
 });
 

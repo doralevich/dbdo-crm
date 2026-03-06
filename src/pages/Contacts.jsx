@@ -78,7 +78,7 @@ function ContactCard({ contact, onCategoryChange }) {
             className="h-10 w-10 rounded-full object-cover shrink-0"
           />
         ) : (
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-navy-lighter text-brand-gold text-sm font-semibold shrink-0">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-gold/10 text-brand-gold text-sm font-semibold shrink-0">
             {getInitials(contact.name)}
           </div>
         )}
@@ -185,7 +185,7 @@ function ContactRow({ contact, onCategoryChange }) {
               className="h-8 w-8 rounded-full object-cover shrink-0"
             />
           ) : (
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-navy-lighter text-brand-gold text-xs font-semibold shrink-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-gold/10 text-brand-gold text-xs font-semibold shrink-0">
               {getInitials(contact.name)}
             </div>
           )}

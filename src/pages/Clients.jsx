@@ -99,7 +99,7 @@ function ClientLogo({ client, size = "md" }) {
   return (
     <div
       className={cn(
-        "flex items-center justify-center rounded-xl bg-brand-navy-lighter text-brand-gold font-semibold shrink-0",
+        "flex items-center justify-center rounded-xl bg-brand-gold/10 text-brand-gold font-semibold shrink-0",
         sizeClasses[size]
       )}
     >

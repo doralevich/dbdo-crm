@@ -13,6 +13,9 @@ import calendarRouter from "./routes/calendar.js";
 import dashboardRouter from "./routes/dashboard.js";
 import teamRouter from "./routes/team.js";
 import contactsRouter from "./routes/contacts.js";
+import { setupTables } from "./lib/setup-tables.js";
+import { startContactsSync } from "./lib/sync-contacts.js";
+import { startCalendarSync } from "./lib/sync-calendar.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -47,6 +50,11 @@ app.get("/{*splat}", (req, res) => {
   res.sendFile(join(distPath, "index.html"));
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Donna CRM API running on http://localhost:${PORT}`);
+
+  // Setup tables then start sync
+  await setupTables();
+  startContactsSync();
+  startCalendarSync();
 });

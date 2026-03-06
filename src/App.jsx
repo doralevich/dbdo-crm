@@ -11,13 +11,8 @@ import Calendar from "./pages/Calendar";
 import Contacts from "./pages/Contacts";
 import Team from "./pages/Team";
 
-const VALID_HASH = "8ff45e622b068d975d63e24a71ff93adf156e218d21c5261a3ba9e94645a0b8e";
-
 export default function App() {
-  const [token, setToken] = useState(() => {
-    const stored = localStorage.getItem("crm_token");
-    return stored === VALID_HASH ? stored : null;
-  });
+  const [token, setToken] = useState(() => localStorage.getItem("crm_token"));
 
   if (!token) {
     return <Login onLogin={setToken} />;

@@ -29,30 +29,30 @@ export default function Layout() {
   const location = useLocation();
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-950">
+    <div className="flex h-screen overflow-hidden bg-surface-raised">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar — dark */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-brand-navy border-r border-border-subtle transition-transform duration-200 lg:static lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-brand-navy border-r border-brand-navy-light transition-transform duration-200 lg:static lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Logo */}
-        <div className="flex h-16 items-center gap-3 px-6 border-b border-border-subtle">
+        <div className="flex h-16 items-center gap-3 px-6 border-b border-white/10">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-gold font-bold text-brand-navy text-sm">
             D
           </div>
           <div>
-            <h1 className="text-sm font-semibold text-text-primary">Donna CRM</h1>
-            <p className="text-[10px] text-text-muted tracking-wider uppercase">DBDO Agency</p>
+            <h1 className="text-sm font-semibold text-white">Donna CRM</h1>
+            <p className="text-[10px] text-gray-500 tracking-wider uppercase">DBDO Agency</p>
           </div>
         </div>
 
@@ -71,8 +71,8 @@ export default function Layout() {
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-brand-gold/10 text-brand-gold"
-                    : "text-text-secondary hover:bg-surface-raised hover:text-text-primary"
+                    ? "bg-brand-gold/15 text-brand-gold"
+                    : "text-gray-400 hover:bg-white/5 hover:text-white"
                 )}
               >
                 <Icon className="h-4.5 w-4.5 shrink-0" />
@@ -83,15 +83,15 @@ export default function Layout() {
         </nav>
 
         {/* Footer */}
-        <div className="border-t border-border-subtle p-4">
+        <div className="border-t border-white/10 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-gold/20 text-brand-gold text-xs font-semibold">
                 DO
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-medium text-text-primary truncate">David O.</p>
-                <p className="text-xs text-text-muted truncate">Owner</p>
+                <p className="text-sm font-medium text-white truncate">David O.</p>
+                <p className="text-xs text-gray-500 truncate">Owner</p>
               </div>
             </div>
             <button
@@ -99,7 +99,7 @@ export default function Layout() {
                 localStorage.removeItem("crm_token");
                 window.location.reload();
               }}
-              className="text-text-muted hover:text-red-400 transition-colors"
+              className="text-gray-500 hover:text-red-400 transition-colors"
               title="Sign out"
             >
               <LogOut className="h-4 w-4" />
@@ -108,13 +108,13 @@ export default function Layout() {
         </div>
       </aside>
 
-      {/* Main content */}
+      {/* Main content — light */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Mobile header */}
-        <header className="flex h-14 items-center gap-4 border-b border-border-subtle bg-brand-navy px-4 lg:hidden">
+        <header className="flex h-14 items-center gap-4 border-b border-border-subtle bg-surface px-4 lg:hidden">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="text-text-secondary hover:text-text-primary"
+            className="text-text-muted hover:text-text-primary"
           >
             <Menu className="h-5 w-5" />
           </button>
@@ -122,12 +122,12 @@ export default function Layout() {
             <div className="flex h-6 w-6 items-center justify-center rounded bg-brand-gold font-bold text-brand-navy text-xs">
               D
             </div>
-            <span className="text-sm font-semibold">Donna CRM</span>
+            <span className="text-sm font-semibold text-text-primary">Donna CRM</span>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-gray-950 p-4 lg:p-6">
+        <main className="flex-1 overflow-y-auto bg-surface-raised p-4 lg:p-6">
           <Outlet />
         </main>
       </div>

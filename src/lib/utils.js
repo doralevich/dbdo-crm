@@ -48,19 +48,19 @@ export function formatRelative(date) {
 
 export function getStatusColor(status) {
   const colors = {
-    active: "text-emerald-400 bg-emerald-400/10",
-    paused: "text-amber-400 bg-amber-400/10",
-    completed: "text-blue-400 bg-blue-400/10",
-    lost: "text-red-400 bg-red-400/10",
-    draft: "text-gray-400 bg-gray-400/10",
-    sent: "text-blue-400 bg-blue-400/10",
-    won: "text-emerald-400 bg-emerald-400/10",
-    retainer: "text-brand-gold bg-brand-gold/10",
-    project: "text-violet-400 bg-violet-400/10",
-    lead: "text-cyan-400 bg-cyan-400/10",
-    prospect: "text-orange-400 bg-orange-400/10",
+    active: "text-emerald-700 bg-emerald-100",
+    paused: "text-amber-700 bg-amber-100",
+    completed: "text-blue-700 bg-blue-100",
+    lost: "text-red-700 bg-red-100",
+    draft: "text-gray-600 bg-gray-100",
+    sent: "text-blue-700 bg-blue-100",
+    won: "text-emerald-700 bg-emerald-100",
+    retainer: "text-brand-gold-dark bg-brand-gold/15",
+    project: "text-violet-700 bg-violet-100",
+    lead: "text-cyan-700 bg-cyan-100",
+    prospect: "text-orange-700 bg-orange-100",
   };
-  return colors[status] || "text-gray-400 bg-gray-400/10";
+  return colors[status] || "text-gray-600 bg-gray-100";
 }
 
 export function getInitials(name) {
