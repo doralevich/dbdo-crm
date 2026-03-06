@@ -144,9 +144,11 @@ Domain: vacamerica.com (Google Workspace active)
 ═══════════════════════════════════════
 1. WIREFRAME REVIEW — Go over current wireframe with Mark, confirm layout/structure
 2. PRODUCTS TO UPDATE — Review which products need updated info, images, or descriptions
-3. PRICING — Finalize pricing strategy for all products in Shopify spreadsheet (barcodes still needed)
+3. PRICING — REMOVE ALL COST from products. No pricing visible.
 4. CHECKOUT FLOW — Review checkout process, confirm tax document status for Shopify checkout
 5. SHIPPING — Discuss shipping setup (currently UPS, FedEx pending better pricing)
+
+⚠️ TASK: Remove all cost/pricing from every product in Shopify store
 
 ACTIVE TASKS:
 - Shopify product spreadsheet — pricing & barcodes need review with Mark
