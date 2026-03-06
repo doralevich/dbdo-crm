@@ -10,11 +10,26 @@ function normalizeContact(person) {
   const orgs = person.organizations || [];
   const photos = person.photos || [];
 
+  // Format US phone numbers: strip +1 or leading 1, format as (XXX) XXX-XXXX
+  let phone = phones[0]?.value || null;
+  if (phone) {
+    // Strip all non-digits
+    let digits = phone.replace(/\D/g, "");
+    // Remove leading 1 for US numbers (11 digits starting with 1)
+    if (digits.length === 11 && digits.startsWith("1")) {
+      digits = digits.slice(1);
+    }
+    // Format as (XXX) XXX-XXXX if 10 digits
+    if (digits.length === 10) {
+      phone = `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+    }
+  }
+
   return {
     google_resource_name: person.resourceName || null,
     name: names.displayName || "",
     email: emails[0]?.value || null,
-    phone: phones[0]?.value || null,
+    phone,
     company: orgs[0]?.name || null,
     title: orgs[0]?.title || null,
     photo_url: photos[0]?.url || null,

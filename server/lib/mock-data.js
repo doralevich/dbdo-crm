@@ -130,7 +130,7 @@ export const mockClients = [
     monthly_value: 0,
     contact_name: "Mark Genoa",
     contact_email: "imark21@aol.com",
-    contact_phone: "1 (631) 974-0649",
+    contact_phone: "(631) 974-0649",
     referral_source: "",
     todoist_project_id: "",
     google_contact_id: "people/c4389558232168668562",
@@ -138,6 +138,15 @@ export const mockClients = [
 Shopify store: vacuum-america-clean.myshopify.com
 Sales email: sales@vacamericaclean.com
 Domain: vacamerica.com (Google Workspace active)
+
+═══════════════════════════════════════
+📋 TODAY'S MEETING AGENDA (Mar 6, 2026)
+═══════════════════════════════════════
+1. WIREFRAME REVIEW — Go over current wireframe with Mark, confirm layout/structure
+2. PRODUCTS TO UPDATE — Review which products need updated info, images, or descriptions
+3. PRICING — Finalize pricing strategy for all products in Shopify spreadsheet (barcodes still needed)
+4. CHECKOUT FLOW — Review checkout process, confirm tax document status for Shopify checkout
+5. SHIPPING — Discuss shipping setup (currently UPS, FedEx pending better pricing)
 
 ACTIVE TASKS:
 - Shopify product spreadsheet — pricing & barcodes need review with Mark
