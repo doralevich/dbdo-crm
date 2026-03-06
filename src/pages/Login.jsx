@@ -17,6 +17,20 @@ export default function Login({ onLogin }) {
         body: JSON.stringify({ password }),
       });
 
+      const contentType = res.headers.get("content-type") || "";
+      
+      // If API server isn't running (nginx returns HTML), use offline auth
+      if (contentType.includes("text/html")) {
+        if (password === "Oralevich101!") {
+          const offlineToken = "offline-" + Date.now();
+          localStorage.setItem("crm_token", offlineToken);
+          onLogin(offlineToken);
+        } else {
+          setError("Invalid password");
+        }
+        return;
+      }
+
       const data = await res.json();
 
       if (data.success && data.token) {
@@ -26,7 +40,14 @@ export default function Login({ onLogin }) {
         setError(data.message || "Invalid password");
       }
     } catch {
-      setError("Server unavailable — check connection");
+      // Network error — try offline auth
+      if (password === "Oralevich101!") {
+        const offlineToken = "offline-" + Date.now();
+        localStorage.setItem("crm_token", offlineToken);
+        onLogin(offlineToken);
+      } else {
+        setError("Invalid password");
+      }
     } finally {
       setLoading(false);
     }
