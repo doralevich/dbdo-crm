@@ -12,7 +12,7 @@ const router = Router();
 router.get("/", async (req, res) => {
   try {
     if (supabase) {
-      let query = supabase.from("clients").select("*").neq("type", "contact").order("last_activity", { ascending: false }).range(0, 999);
+      let query = supabase.from("clients").select("*").order("last_activity", { ascending: false }).range(0, 999);
 
       if (req.query.status) query = query.eq("status", req.query.status);
       if (req.query.type) query = query.eq("type", req.query.type);
