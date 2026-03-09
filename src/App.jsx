@@ -8,7 +8,7 @@ import ClientDetail from "./pages/ClientDetail";
 import Tasks from "./pages/Tasks";
 
 import Calendar from "./pages/Calendar";
-import Contacts from "./pages/Contacts";
+
 
 
 function AppRoutes() {
@@ -23,7 +23,7 @@ function AppRoutes() {
         <Route path="/tasks" element={<Tasks />} />
         
         <Route path="/calendar" element={<Calendar />} />
-        <Route path="/contacts" element={<Contacts />} />
+
 
         <Route path="*" element={<Dashboard />} />
       </Routes>
