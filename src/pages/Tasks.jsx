@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   CheckSquare, AlertTriangle, Calendar, ChevronDown,
   ChevronRight, CheckCircle2, Plus,
@@ -56,6 +57,9 @@ function TaskRow({ task, today, onClick }) {
 }
 
 export default function Tasks() {
+  const [searchParams] = useSearchParams();
+  const clientFilter = searchParams.get("client"); // client UUID from sidebar
+
   const [tasks, setTasks]             = useState([]);
   const [clients, setClients]         = useState([]);
   const [loading, setLoading]         = useState(true);
@@ -74,9 +78,10 @@ export default function Tasks() {
 
   const filtered = useMemo(() => {
     let r = tasks.filter(t => !t.is_completed);
+    if (clientFilter) r = r.filter(t => t.client_id === clientFilter);
     if (filterPriority !== "all") r = r.filter(t => t.priority === parseInt(filterPriority));
     return r;
-  }, [tasks, filterPriority]);
+  }, [tasks, filterPriority, clientFilter]);
 
   const grouped = useMemo(() => {
     const g = {};
@@ -126,8 +131,14 @@ export default function Tasks() {
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">Tasks</h1>
-          <p className="text-sm text-text-muted mt-0.5">{filtered.length} open</p>
+          <h1 className="text-2xl font-bold text-text-primary">
+            {clientFilter
+              ? (clients.find(c => c.id === clientFilter)?.name || "Tasks")
+              : "Tasks"}
+          </h1>
+          <p className="text-sm text-text-muted mt-0.5">
+            {filtered.length} open{clientFilter && " · "}{clientFilter && <span className="text-brand-gold">filtered by client</span>}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           {overdue.length > 0 && (
