@@ -96,30 +96,16 @@ function ClientCard({ client, onTypeChange }) {
 
   return (
     <Link to={`/clients/${client.id}`}>
-      <Card className="group hover:border-brand-gold/30 cursor-pointer h-full transition-all hover:shadow-lg hover:shadow-brand-gold/5">
-        {/* Header: Name + type tag */}
-        <div className="flex items-start justify-between mb-3">
-          <div className="min-w-0 flex-1">
-            <h3 className="text-base font-bold text-text-primary truncate group-hover:text-brand-gold transition-colors leading-tight">
-              {client.name}
-            </h3>
-            {client.contact_name && client.contact_name !== client.name && (
-              <div className="flex items-center gap-1.5 mt-1">
-                <User className="h-3 w-3 text-text-muted shrink-0" />
-                <span className="text-xs text-text-secondary truncate">{client.contact_name}</span>
-              </div>
-            )}
-            {client.website && (
-              <div className="flex items-center gap-1.5 mt-1">
-                <Globe className="h-3 w-3 text-text-muted shrink-0" />
-                <span className="text-xs text-text-muted truncate">{client.website}</span>
-              </div>
-            )}
-          </div>
+      <Card className="group hover:border-brand-gold/30 cursor-pointer h-full transition-all hover:shadow-lg hover:shadow-brand-gold/5 overflow-hidden p-0">
+        {/* Top banner — company name */}
+        <div className="relative bg-surface-raised border-b border-border-subtle px-4 py-3 flex items-center justify-between gap-2">
+          <h3 className="text-sm font-bold text-text-primary truncate group-hover:text-brand-gold transition-colors leading-snug">
+            {client.name}
+          </h3>
           <button
             onClick={handlePromote}
             className={cn(
-              "ml-2 shrink-0 rounded-full px-2 py-0.5 text-xs font-medium transition-all border opacity-0 group-hover:opacity-100",
+              "shrink-0 rounded-full px-2 py-0.5 text-xs font-medium transition-all border opacity-0 group-hover:opacity-100",
               isContact
                 ? "border-brand-gold/40 text-brand-gold hover:bg-brand-gold hover:text-brand-navy"
                 : "border-emerald-400/40 text-emerald-400 hover:bg-emerald-400 hover:text-white"
@@ -130,35 +116,50 @@ function ClientCard({ client, onTypeChange }) {
           </button>
         </div>
 
-
-
-        {/* Email + Phone */}
-        <div className="space-y-1 mb-3">
-          {client.contact_email && (
-            <div className="flex items-center gap-1.5 text-xs text-text-secondary truncate">
-              <Mail className="h-3 w-3 text-text-muted shrink-0" />
-              <span className="truncate">{client.contact_email}</span>
+        {/* Card body */}
+        <div className="px-4 py-3">
+          {/* Contact name + website */}
+          {client.contact_name && client.contact_name !== client.name && (
+            <div className="flex items-center gap-1.5 mb-2">
+              <User className="h-3 w-3 text-text-muted shrink-0" />
+              <span className="text-xs text-text-secondary truncate">{client.contact_name}</span>
             </div>
           )}
-          {client.contact_phone && (
-            <div className="flex items-center gap-1.5 text-xs text-text-secondary">
-              <Phone className="h-3 w-3 text-text-muted shrink-0" />
-              <span>{client.contact_phone}</span>
+          {client.website && (
+            <div className="flex items-center gap-1.5 mb-2">
+              <Globe className="h-3 w-3 text-text-muted shrink-0" />
+              <span className="text-xs text-text-muted truncate">{client.website}</span>
             </div>
           )}
-        </div>
 
-        {/* Footer: Activity + Value */}
-        <div className="flex items-center justify-between text-xs text-text-muted pt-3 border-t border-border-subtle">
-          <div className="flex items-center gap-1.5">
-            <Clock className="h-3 w-3" />
-            <span>{formatRelative(client.last_activity)}</span>
+          {/* Email + Phone */}
+          <div className="space-y-1 mt-2">
+            {client.contact_email && (
+              <div className="flex items-center gap-1.5 text-xs text-text-secondary truncate">
+                <Mail className="h-3 w-3 text-text-muted shrink-0" />
+                <span className="truncate">{client.contact_email}</span>
+              </div>
+            )}
+            {client.contact_phone && (
+              <div className="flex items-center gap-1.5 text-xs text-text-secondary">
+                <Phone className="h-3 w-3 text-text-muted shrink-0" />
+                <span>{client.contact_phone}</span>
+              </div>
+            )}
           </div>
-          {client.monthly_value > 0 && (
-            <span className="font-semibold text-brand-gold text-sm">
-              {formatCurrency(client.monthly_value)}<span className="text-xs text-text-muted font-normal">/mo</span>
-            </span>
-          )}
+
+          {/* Footer: Activity + Value */}
+          <div className="flex items-center justify-between text-xs text-text-muted pt-3 mt-3 border-t border-border-subtle">
+            <div className="flex items-center gap-1.5">
+              <Clock className="h-3 w-3" />
+              <span>{formatRelative(client.last_activity)}</span>
+            </div>
+            {client.monthly_value > 0 && (
+              <span className="font-semibold text-brand-gold text-sm">
+                {formatCurrency(client.monthly_value)}<span className="text-xs text-text-muted font-normal">/mo</span>
+              </span>
+            )}
+          </div>
         </div>
       </Card>
     </Link>
