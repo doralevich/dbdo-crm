@@ -3,15 +3,15 @@ import {
   LayoutDashboard,
   Users,
   CheckSquare,
-
   CalendarDays,
-
-
   Menu,
   X,
   LogOut,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { fetchClients } from "../lib/api";
 import { cn } from "../lib/utils";
 
 const navItems = [

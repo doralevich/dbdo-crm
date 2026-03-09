@@ -178,7 +178,7 @@ export default function Clients() {
   useEffect(() => {
     setLoading(true);
     fetchClients()
-      .then(setClients)
+      .then(data => setClients([...data].sort((a, b) => a.name.localeCompare(b.name))))
       .finally(() => setLoading(false));
   }, []);
 
