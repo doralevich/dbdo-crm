@@ -13,12 +13,13 @@ import {
   Phone,
   Pencil,
   Trash2,
+  CheckSquare,
 } from "lucide-react";
 import Card from "../components/Card";
 import Badge from "../components/Badge";
 import { PageLoader } from "../components/Spinner";
 import EmptyState from "../components/EmptyState";
-import { fetchClients, updateClient, deleteClient } from "../lib/api";
+import { fetchClients, updateClient, deleteClient, fetchTaskClients } from "../lib/api";
 import {
   cn,
   formatCurrency,
@@ -84,7 +85,9 @@ function categorizeClients(clients) {
   return categories;
 }
 
-function ClientCard({ client, onTypeChange, onDelete }) {
+const PRIORITY_BORDER = { 4: "border-l-red-500", 3: "border-l-orange-400", 2: "border-l-blue-400", 1: "border-l-gray-500" };
+
+function ClientCard({ client, onTypeChange, onDelete, taskInfo }) {
   const isContact = client.type === "contact";
 
   const handlePromote = async (e) => {
@@ -130,6 +133,23 @@ function ClientCard({ client, onTypeChange, onDelete }) {
             <div className="flex items-center gap-1.5 mb-2">
               <Globe className="h-3 w-3 text-text-muted shrink-0" />
               <span className="text-xs text-text-muted truncate">{client.website}</span>
+            </div>
+          )}
+
+          {/* Tasks */}
+          {taskInfo && taskInfo.count > 0 && (
+            <div className="mt-2 mb-2">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <CheckSquare className="h-3 w-3 text-brand-gold shrink-0" />
+                <span className="text-xs font-medium text-brand-gold">{taskInfo.count} open task{taskInfo.count !== 1 && "s"}</span>
+              </div>
+              <div className="space-y-1">
+                {taskInfo.tasks.map(t => (
+                  <div key={t.id} className={cn("flex items-center gap-2 text-xs text-text-muted border-l-2 pl-2 py-0.5", PRIORITY_BORDER[t.priority] || "border-l-gray-500")}>
+                    <span className="truncate">{t.content}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
@@ -190,6 +210,7 @@ function ClientCard({ client, onTypeChange, onDelete }) {
 
 export default function Clients() {
   const [clients, setClients] = useState([]);
+  const [taskMap, setTaskMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
@@ -197,8 +218,15 @@ export default function Clients() {
 
   useEffect(() => {
     setLoading(true);
-    fetchClients()
-      .then(data => setClients([...data].sort((a, b) => a.name.localeCompare(b.name))))
+    Promise.all([fetchClients(), fetchTaskClients()])
+      .then(([cls, taskClients]) => {
+        setClients([...cls].sort((a, b) => a.name.localeCompare(b.name)));
+        const map = {};
+        for (const tc of taskClients || []) {
+          if (tc.id) map[tc.id] = tc;
+        }
+        setTaskMap(map);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -276,7 +304,7 @@ export default function Clients() {
               <div key={name} className="space-y-3">
                 <h2 className="text-sm font-bold text-text-secondary uppercase tracking-wider px-1">{name} ({cls.length})</h2>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {cls.map((client) => <ClientCard key={client.id} client={client} onTypeChange={handleTypeChange} onDelete={handleDelete} />)}
+                  {cls.map((client) => <ClientCard key={client.id} client={client} onTypeChange={handleTypeChange} onDelete={handleDelete} taskInfo={taskMap[client.id]} />)}
                 </div>
               </div>
             ) : null
@@ -284,7 +312,7 @@ export default function Clients() {
         </div>
       ) : view === "grid" ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filtered.map((client) => <ClientCard key={client.id} client={client} onTypeChange={handleTypeChange} onDelete={handleDelete} />)}
+          {filtered.map((client) => <ClientCard key={client.id} client={client} onTypeChange={handleTypeChange} onDelete={handleDelete} taskInfo={taskMap[client.id]} />)}
         </div>
       ) : (
         <Card className="overflow-hidden p-0">

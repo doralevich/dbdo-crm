@@ -5,27 +5,27 @@ const router = Router();
 
 const PRIORITY_LABEL = { 1: "low", 2: "medium", 3: "high", 4: "urgent" };
 
-// GET /api/tasks/clients — clients that have open tasks
+// GET /api/tasks/clients — clients that have open tasks, with counts + top tasks
 router.get("/clients", async (req, res) => {
   try {
     if (!supabase) return res.json([]);
     const { data, error } = await supabase
       .from("tasks")
-      .select("owner, client_id")
-      .eq("is_completed", false);
+      .select("id, content, owner, client_id, priority, due_date")
+      .eq("is_completed", false)
+      .order("priority", { ascending: false });
     if (error) throw new Error(error.message);
 
-    // Get unique owner names, sorted alphabetically
-    const seen = new Set();
-    const clients = [];
+    // Group by client
+    const map = {};
     for (const t of data || []) {
-      const name = t.owner;
-      if (name && !seen.has(name)) {
-        seen.add(name);
-        clients.push({ id: t.client_id, name });
-      }
+      const key = t.client_id || t.owner;
+      if (!key) continue;
+      if (!map[key]) map[key] = { id: t.client_id, name: t.owner, count: 0, tasks: [] };
+      map[key].count++;
+      if (map[key].tasks.length < 3) map[key].tasks.push({ id: t.id, content: t.content, priority: t.priority, due_date: t.due_date });
     }
-    clients.sort((a, b) => a.name.localeCompare(b.name));
+    const clients = Object.values(map).sort((a, b) => (a.name||"").localeCompare(b.name||""));
     res.json(clients);
   } catch (err) {
     res.status(500).json({ message: err.message });
