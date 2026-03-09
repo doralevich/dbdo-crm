@@ -17,7 +17,7 @@ import Card from "../components/Card";
 import Badge from "../components/Badge";
 import { PageLoader } from "../components/Spinner";
 import EmptyState from "../components/EmptyState";
-import { fetchClients } from "../lib/api";
+import { fetchClients, updateClient } from "../lib/api";
 import {
   cn,
   formatCurrency,
@@ -28,7 +28,8 @@ import {
 
 const FILTERS = [
   { key: "all", label: "All" },
-  { key: "active", label: "Active" },
+  { key: "client", label: "Clients" },
+  { key: "contact", label: "Contacts" },
   { key: "lead", label: "Leads" },
 ];
 
@@ -82,37 +83,51 @@ function categorizeClients(clients) {
   return categories;
 }
 
-function ClientCard({ client }) {
+function ClientCard({ client, onTypeChange }) {
+  const isContact = client.type === "contact";
+
+  const handlePromote = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const newType = isContact ? "active" : "contact";
+    await updateClient(client.id, { type: newType });
+    onTypeChange(client.id, newType);
+  };
+
   return (
     <Link to={`/clients/${client.id}`}>
       <Card className="group hover:border-brand-gold/30 cursor-pointer h-full transition-all hover:shadow-lg hover:shadow-brand-gold/5">
-        {/* Header: Name */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="min-w-0">
-              <h3 className="text-base font-bold text-text-primary truncate group-hover:text-brand-gold transition-colors leading-tight">
-                {client.name}
-              </h3>
-              {client.contact_name ? (
-                <div className="flex items-center gap-1.5 mt-1">
-                  <User className="h-3 w-3 text-text-muted shrink-0" />
-                  <span className="text-xs text-text-secondary truncate">
-                    {client.contact_name}
-                  </span>
-                </div>
-              ) : (
-                client.website && (
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <Globe className="h-3 w-3 text-text-muted shrink-0" />
-                    <span className="text-xs text-text-muted truncate">
-                      {client.website}
-                    </span>
-                  </div>
-                )
-              )}
-            </div>
+        {/* Header: Name + type tag */}
+        <div className="flex items-start justify-between mb-3">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base font-bold text-text-primary truncate group-hover:text-brand-gold transition-colors leading-tight">
+              {client.name}
+            </h3>
+            {client.contact_name && client.contact_name !== client.name && (
+              <div className="flex items-center gap-1.5 mt-1">
+                <User className="h-3 w-3 text-text-muted shrink-0" />
+                <span className="text-xs text-text-secondary truncate">{client.contact_name}</span>
+              </div>
+            )}
+            {client.website && (
+              <div className="flex items-center gap-1.5 mt-1">
+                <Globe className="h-3 w-3 text-text-muted shrink-0" />
+                <span className="text-xs text-text-muted truncate">{client.website}</span>
+              </div>
+            )}
           </div>
-          <ArrowRight className="h-4 w-4 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity shrink-0 mt-1" />
+          <button
+            onClick={handlePromote}
+            className={cn(
+              "ml-2 shrink-0 rounded-full px-2 py-0.5 text-xs font-medium transition-all border opacity-0 group-hover:opacity-100",
+              isContact
+                ? "border-brand-gold/40 text-brand-gold hover:bg-brand-gold hover:text-brand-navy"
+                : "border-emerald-400/40 text-emerald-400 hover:bg-emerald-400 hover:text-white"
+            )}
+            title={isContact ? "Promote to Client" : "Mark as Contact"}
+          >
+            {isContact ? "→ Client" : "→ Contact"}
+          </button>
         </div>
 
 
@@ -161,23 +176,28 @@ export default function Clients() {
 
   useEffect(() => {
     setLoading(true);
-    const params = {};
-    if (filter === "active") params.status = "active";
-    else if (filter === "lead") params.type = "lead";
-
-    fetchClients(Object.keys(params).length ? params : undefined)
+    fetchClients()
       .then(setClients)
       .finally(() => setLoading(false));
-  }, [filter]);
+  }, []);
 
-  const filtered = search
-    ? clients.filter(
-        (c) =>
-          c.name.toLowerCase().includes(search.toLowerCase()) ||
-          c.contact_name?.toLowerCase().includes(search.toLowerCase()) ||
-          c.website?.toLowerCase().includes(search.toLowerCase())
-      )
-    : clients;
+  const handleTypeChange = (id, newType) => {
+    setClients(prev => prev.map(c => c.id === id ? { ...c, type: newType } : c));
+  };
+
+  const filtered = useMemo(() => {
+    let list = clients;
+    if (filter === "client") list = list.filter(c => c.type !== "contact" && c.type !== "lead");
+    else if (filter === "contact") list = list.filter(c => c.type === "contact");
+    else if (filter === "lead") list = list.filter(c => c.type === "lead");
+    if (search) list = list.filter(c =>
+      c.name.toLowerCase().includes(search.toLowerCase()) ||
+      c.contact_name?.toLowerCase().includes(search.toLowerCase()) ||
+      c.contact_email?.toLowerCase().includes(search.toLowerCase()) ||
+      c.website?.toLowerCase().includes(search.toLowerCase())
+    );
+    return list;
+  }, [clients, filter, search]);
 
   const categories = useMemo(() => categorizeClients(filtered), [filtered]);
 
@@ -229,7 +249,7 @@ export default function Clients() {
               <div key={name} className="space-y-3">
                 <h2 className="text-sm font-bold text-text-secondary uppercase tracking-wider px-1">{name} ({cls.length})</h2>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {cls.map((client) => <ClientCard key={client.id} client={client} />)}
+                  {cls.map((client) => <ClientCard key={client.id} client={client} onTypeChange={handleTypeChange} />)}
                 </div>
               </div>
             ) : null
@@ -237,7 +257,7 @@ export default function Clients() {
         </div>
       ) : view === "grid" ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filtered.map((client) => <ClientCard key={client.id} client={client} />)}
+          {filtered.map((client) => <ClientCard key={client.id} client={client} onTypeChange={handleTypeChange} />)}
         </div>
       ) : (
         <Card className="overflow-hidden p-0">
