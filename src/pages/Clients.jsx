@@ -9,10 +9,6 @@ import {
   LayoutGrid,
   List,
   User,
-  Crown,
-  Briefcase,
-  Moon,
-  AlertTriangle,
 } from "lucide-react";
 import Card from "../components/Card";
 import Badge from "../components/Badge";
@@ -30,50 +26,8 @@ import {
 const FILTERS = [
   { key: "all", label: "All" },
   { key: "active", label: "Active" },
-  { key: "retainer", label: "Retainers" },
-  { key: "project", label: "Projects" },
   { key: "lead", label: "Leads" },
-  { key: "quiet", label: "Quiet 30d+" },
-  { key: "lapsed", label: "Lapsed 60d+" },
 ];
-
-const CATEGORY_CONFIG = {
-  "Active Retainers": {
-    icon: Crown,
-    color: "text-brand-gold",
-    bgColor: "bg-brand-gold/5",
-    borderColor: "border-brand-gold/20",
-    description: "Monthly retainer clients",
-  },
-  "Active Projects": {
-    icon: Briefcase,
-    color: "text-violet-400",
-    bgColor: "bg-violet-400/5",
-    borderColor: "border-violet-400/20",
-    description: "One-time or ongoing project work",
-  },
-  "Leads (Quiet 30d)": {
-    icon: Moon,
-    color: "text-amber-400",
-    bgColor: "bg-amber-400/5",
-    borderColor: "border-amber-400/20",
-    description: "No activity in 30+ days",
-  },
-  "Lapsed (60d+)": {
-    icon: AlertTriangle,
-    color: "text-red-400",
-    bgColor: "bg-red-400/5",
-    borderColor: "border-red-400/20",
-    description: "No activity in 60+ days — needs outreach",
-  },
-  "Completed": {
-    icon: Briefcase,
-    color: "text-gray-400",
-    bgColor: "bg-gray-400/5",
-    borderColor: "border-gray-400/20",
-    description: "Finished projects",
-  },
-};
 
 function ClientLogo({ client, size = "md" }) {
   const [imgError, setImgError] = useState(false);
@@ -109,31 +63,16 @@ function ClientLogo({ client, size = "md" }) {
 }
 
 function categorizeClients(clients) {
-  const now = new Date();
   const categories = {
-    "Active Retainers": [],
-    "Active Projects": [],
-    "Leads (Quiet 30d)": [],
-    "Lapsed (60d+)": [],
+    "Active": [],
     "Completed": [],
   };
 
   for (const client of clients) {
-    const lastActivity = client.last_activity ? new Date(client.last_activity) : null;
-    const daysSince = lastActivity
-      ? Math.floor((now - lastActivity) / (1000 * 60 * 60 * 24))
-      : 999;
-
     if (client.status === "completed") {
-      categories["Completed"].push({ ...client, _daysSince: daysSince });
-    } else if (daysSince >= 60) {
-      categories["Lapsed (60d+)"].push({ ...client, _daysSince: daysSince });
-    } else if (daysSince >= 30) {
-      categories["Leads (Quiet 30d)"].push({ ...client, _daysSince: daysSince });
-    } else if (client.type === "retainer") {
-      categories["Active Retainers"].push({ ...client, _daysSince: daysSince });
+      categories["Completed"].push(client);
     } else {
-      categories["Active Projects"].push({ ...client, _daysSince: daysSince });
+      categories["Active"].push(client);
     }
   }
 
@@ -201,42 +140,6 @@ function ClientCard({ client }) {
   );
 }
 
-function CategorySection({ name, clients, config }) {
-  const [collapsed, setCollapsed] = useState(false);
-  const Icon = config.icon;
-
-  if (clients.length === 0) return null;
-
-  return (
-    <div className="space-y-3">
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className={cn(
-          "flex w-full items-center gap-3 rounded-xl px-4 py-3 transition-all border",
-          config.borderColor,
-          config.bgColor,
-          "hover:opacity-80"
-        )}
-      >
-        <Icon className={cn("h-5 w-5", config.color)} />
-        <div className="flex-1 text-left">
-          <h2 className={cn("text-sm font-bold", config.color)}>{name}</h2>
-          <p className="text-xs text-text-muted">{config.description}</p>
-        </div>
-        <span className={cn("text-lg font-bold tabular-nums", config.color)}>
-          {clients.length}
-        </span>
-      </button>
-      {!collapsed && (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {clients.map((client) => (
-            <ClientCard key={client.id} client={client} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function Clients() {
   const [clients, setClients] = useState([]);
@@ -249,11 +152,7 @@ export default function Clients() {
     setLoading(true);
     const params = {};
     if (filter === "active") params.status = "active";
-    else if (filter === "retainer") params.type = "retainer";
-    else if (filter === "project") params.type = "project";
     else if (filter === "lead") params.type = "lead";
-    else if (filter === "quiet") params.filter = "quiet";
-    else if (filter === "lapsed") params.filter = "lapsed";
 
     fetchClients(Object.keys(params).length ? params : undefined)
       .then(setClients)
@@ -271,7 +170,7 @@ export default function Clients() {
 
   const categories = useMemo(() => categorizeClients(filtered), [filtered]);
 
-  const totalActive = categories["Active Retainers"].length + categories["Active Projects"].length;
+  const totalActive = categories["Active"].length;
 
   return (
     <div className="space-y-6">
@@ -362,16 +261,20 @@ export default function Clients() {
           description="Try adjusting your search or filter."
         />
       ) : view === "grouped" ? (
-        /* Grouped view - organized by category */
+        /* Grouped view - Active then Completed */
         <div className="space-y-8">
-          {Object.entries(CATEGORY_CONFIG).map(([name, config]) => (
-            <CategorySection
-              key={name}
-              name={name}
-              clients={categories[name] || []}
-              config={config}
-            />
-          ))}
+          {Object.entries(categories).map(([name, clients]) =>
+            clients.length > 0 ? (
+              <div key={name} className="space-y-3">
+                <h2 className="text-sm font-bold text-text-secondary uppercase tracking-wider px-1">{name} ({clients.length})</h2>
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {clients.map((client) => (
+                    <ClientCard key={client.id} client={client} />
+                  ))}
+                </div>
+              </div>
+            ) : null
+          )}
         </div>
       ) : view === "grid" ? (
         /* Flat card grid */
