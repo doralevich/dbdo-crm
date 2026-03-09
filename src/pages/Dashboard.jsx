@@ -33,13 +33,18 @@ export default function Dashboard() {
       fetchDashboardStats(),
       fetchTasks(),
       fetchEmails(),
-      fetchEvents(),
+      fetchEvents({ timeMin: new Date().toISOString(), timeMax: new Date(Date.now() + 14 * 86400000).toISOString() }),
     ])
       .then(([s, t, e, ev]) => {
         setStats(s);
         setTasks(t);
         setEmails(e);
-        setEvents(ev);
+        // Sort ascending and only show future events
+        const now = new Date();
+        const upcoming = (ev || [])
+          .filter(ev => new Date(ev.start?.dateTime || ev.start?.date) >= now)
+          .sort((a, b) => new Date(a.start?.dateTime || a.start?.date) - new Date(b.start?.dateTime || b.start?.date));
+        setEvents(upcoming);
       })
       .finally(() => setLoading(false));
   }, []);
