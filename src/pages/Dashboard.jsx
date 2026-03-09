@@ -213,12 +213,7 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {/* ── Stats row (removed Active Projects) */}
-      <div className="grid grid-cols-3 gap-4">
-        <StatCard label="Pipeline Value"      value={formatCurrency(stats?.pipeline_value || 0)}          icon={TrendingUp}  />
-        <StatCard label="Monthly Retainers"   value={formatCurrency(stats?.monthly_retainer_value || 0)}  icon={DollarSign}  />
-        <StatCard label="Meetings Today"      value={stats?.meetings_today || 0}                          icon={CalendarDays}/>
-      </div>
+
 
       {/* ── Main content */}
       <div className="grid gap-5 lg:grid-cols-2">
