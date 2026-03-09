@@ -5,8 +5,8 @@ const fs = require('fs');
 const path = require('path');
 
 const s = createClient(
-  'https://moubzvpffhqvumipbnfj.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vdWJ6dnBmZmhxdnVtaXBibmZqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjMwOTgwOCwiZXhwIjoyMDg3ODg1ODA4fQ.bNycYp-6LcbRZqx0Z9l49jO6AViQhbwfqgSwYWwjKRg'
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_KEY
 );
 
 const TABLES = ['clients', 'contacts', 'calendar_events', 'proposals', 'interactions'];
