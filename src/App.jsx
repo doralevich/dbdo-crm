@@ -9,7 +9,7 @@ import Tasks from "./pages/Tasks";
 
 import Calendar from "./pages/Calendar";
 import Contacts from "./pages/Contacts";
-import Team from "./pages/Team";
+
 
 function AppRoutes() {
   return (
@@ -24,7 +24,7 @@ function AppRoutes() {
         
         <Route path="/calendar" element={<Calendar />} />
         <Route path="/contacts" element={<Contacts />} />
-        <Route path="/team" element={<Team />} />
+
         <Route path="*" element={<Dashboard />} />
       </Routes>
     </Layout>

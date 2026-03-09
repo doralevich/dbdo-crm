@@ -6,7 +6,7 @@ import {
 
   CalendarDays,
   Contact,
-  UsersRound,
+
   Menu,
   X,
   LogOut,
@@ -21,7 +21,7 @@ const navItems = [
 
   { to: "/calendar", icon: CalendarDays, label: "Calendar" },
   { to: "/contacts", icon: Contact, label: "Contacts" },
-  { to: "/team", icon: UsersRound, label: "Team" },
+
 ];
 
 export default function Layout({ children }) {
