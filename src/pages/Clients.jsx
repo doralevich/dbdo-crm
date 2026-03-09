@@ -273,6 +273,9 @@ export default function Clients() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Link to="/duplicates" className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium bg-surface-raised text-text-secondary hover:text-brand-gold transition-colors">
+            Find Duplicates
+          </Link>
           <button onClick={() => setView("grouped")} className={cn("rounded-lg px-3 py-2 text-xs font-medium transition-colors", view === "grouped" ? "bg-brand-gold text-brand-navy" : "bg-surface-raised text-text-secondary hover:text-text-primary")}>Grouped</button>
           <button onClick={() => setView("grid")} className={cn("rounded-lg p-2 transition-colors", view === "grid" ? "bg-surface-raised text-text-primary" : "text-text-muted hover:text-text-secondary")}><LayoutGrid className="h-4 w-4" /></button>
           <button onClick={() => setView("list")} className={cn("rounded-lg p-2 transition-colors", view === "list" ? "bg-surface-raised text-text-primary" : "text-text-muted hover:text-text-secondary")}><List className="h-4 w-4" /></button>

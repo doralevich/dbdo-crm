@@ -5,6 +5,8 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Clients from "./pages/Clients";
 import ClientDetail from "./pages/ClientDetail";
+import ClientEdit from "./pages/ClientEdit";
+import Duplicates from "./pages/Duplicates";
 import Tasks from "./pages/Tasks";
 
 import Calendar from "./pages/Calendar";
@@ -20,6 +22,8 @@ function AppRoutes() {
         <Route path="/login" element={<Dashboard />} />
         <Route path="/clients" element={<Clients />} />
         <Route path="/clients/:id" element={<ClientDetail />} />
+        <Route path="/clients/:id/edit" element={<ClientEdit />} />
+        <Route path="/duplicates" element={<Duplicates />} />
         <Route path="/tasks" element={<Tasks />} />
         
         <Route path="/calendar" element={<Calendar />} />
