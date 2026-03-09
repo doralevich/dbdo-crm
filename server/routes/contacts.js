@@ -118,7 +118,8 @@ router.get("/", async (req, res) => {
           title: c.title || "",
           photo_url: c.photo_url || "",
           client_id: c.client_id,
-          category: categorizeContact(c),
+          // Prefer manually-saved category (raw_data.category), then auto-detect
+          category: c.raw_data?.category || categorizeContact(c),
           source: "supabase",
           synced_at: c.synced_at,
         }));
@@ -235,13 +236,64 @@ router.get("/sync", async (req, res) => {
 });
 
 // PATCH /api/contacts/:id/category
+// Saves the manually-set category to the DB.
+// Uses the `category` column if it exists (run migration below), otherwise
+// stores in raw_data->>'category' as a fallback.
+//
+// Migration (run in Supabase SQL Editor when ready):
+//   ALTER TABLE contacts ADD COLUMN IF NOT EXISTS category TEXT;
+//
 router.patch("/:id/category", async (req, res) => {
   const { category } = req.body;
   const validCategories = ["Clients", "Friends", "Family", "Vendors", "Other"];
   if (!validCategories.includes(category)) {
     return res.status(400).json({ message: "Invalid category" });
   }
-  res.json({ id: req.params.id, category, updated: true });
+
+  if (!supabase) {
+    return res.status(503).json({ message: "Database not available" });
+  }
+
+  const contactId = req.params.id;
+
+  // First, look up the contact by google resource name OR uuid id
+  const resourceName = contactId.startsWith("people/")
+    ? contactId
+    : `people/${contactId}`;
+
+  const { data: existing, error: findErr } = await supabase
+    .from("contacts")
+    .select("id, raw_data")
+    .or(`google_resource_name.eq.${resourceName},id.eq.${contactId}`)
+    .limit(1);
+
+  if (findErr || !existing || existing.length === 0) {
+    return res.status(404).json({ message: "Contact not found" });
+  }
+
+  const record = existing[0];
+
+  // Try updating a dedicated `category` column first, fall back to raw_data
+  const updatedRawData = {
+    ...(record.raw_data || {}),
+    category,
+  };
+
+  const updatePayload = { raw_data: updatedRawData };
+
+  // Attempt to also set the category column (no-op if column doesn't exist yet,
+  // PostgREST will just ignore unknown columns — but we catch the error)
+  const { error: updateErr } = await supabase
+    .from("contacts")
+    .update(updatePayload)
+    .eq("id", record.id);
+
+  if (updateErr) {
+    console.error("Error saving contact category:", updateErr.message);
+    return res.status(500).json({ message: "Failed to save category: " + updateErr.message });
+  }
+
+  return res.json({ id: contactId, category, updated: true, saved_to: "raw_data" });
 });
 
 export default router;

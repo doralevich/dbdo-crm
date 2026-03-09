@@ -3,7 +3,7 @@ import {
   LayoutDashboard,
   Users,
   CheckSquare,
-  Mail,
+
   CalendarDays,
   Contact,
   UsersRound,
@@ -18,7 +18,7 @@ const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/clients", icon: Users, label: "Clients" },
   { to: "/tasks", icon: CheckSquare, label: "Tasks" },
-  { to: "/email", icon: Mail, label: "Email" },
+
   { to: "/calendar", icon: CalendarDays, label: "Calendar" },
   { to: "/contacts", icon: Contact, label: "Contacts" },
   { to: "/team", icon: UsersRound, label: "Team" },

@@ -67,6 +67,27 @@ CREATE TABLE IF NOT EXISTS interactions (
   summary TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS client_emails (
+  id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  message_id  TEXT UNIQUE NOT NULL,
+  thread_id   TEXT,
+  client_id   UUID REFERENCES clients(id),
+  contact_id  UUID REFERENCES contacts(id),
+  from_email  TEXT,
+  from_name   TEXT,
+  to_email    TEXT,
+  subject     TEXT,
+  snippet     TEXT,
+  date        TIMESTAMPTZ,
+  labels      JSONB DEFAULT '[]'::jsonb,
+  is_read     BOOLEAN DEFAULT true,
+  direction   TEXT DEFAULT 'inbound',
+  synced_at   TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS client_emails_client_id_idx ON client_emails(client_id);
+CREATE INDEX IF NOT EXISTS client_emails_date_idx ON client_emails(date DESC);
+CREATE INDEX IF NOT EXISTS client_emails_from_email_idx ON client_emails(from_email);
 `;
 
 async function executeSql(sql) {
@@ -105,7 +126,7 @@ export async function setupTables() {
   }
 
   // Verify tables exist by attempting selects
-  const tables = ["clients", "contacts", "calendar_events", "proposals", "interactions"];
+  const tables = ["clients", "contacts", "calendar_events", "proposals", "interactions", "client_emails"];
   let allOk = true;
   for (const table of tables) {
     const { error } = await supabase.from(table).select("id").limit(1);

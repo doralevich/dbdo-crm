@@ -5,9 +5,10 @@
   --color-brand-gold: #D4A843;
   --color-brand-gold-light: #E8C872;
   --color-brand-gold-dark: #B8922F;
-  --color-brand-navy: #111318;
-  --color-brand-navy-light: #1A2540;
-  --color-brand-navy-lighter: #243052;
+  --color-brand-navy: #1a3352;
+  --color-brand-navy-dark: #111318;
+  --color-brand-navy-light: #24426b;
+  --color-brand-navy-lighter: #2e5282;
 
   /* Light theme semantic */
   --color-surface: #FFFFFF;
@@ -40,6 +41,12 @@
 
 * {
   scrollbar-color: #D1D5DB transparent;
+}
+
+/* DBDO Brand CSS variables */
+:root {
+  --brand-navy: #1a3352;
+  --brand-gold: #D4A843;
 }
 
 body {
