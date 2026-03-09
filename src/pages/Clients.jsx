@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Search,
   Filter,
@@ -11,13 +11,14 @@ import {
   User,
   Mail,
   Phone,
-
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import Card from "../components/Card";
 import Badge from "../components/Badge";
 import { PageLoader } from "../components/Spinner";
 import EmptyState from "../components/EmptyState";
-import { fetchClients, updateClient } from "../lib/api";
+import { fetchClients, updateClient, deleteClient } from "../lib/api";
 import {
   cn,
   formatCurrency,
@@ -83,7 +84,7 @@ function categorizeClients(clients) {
   return categories;
 }
 
-function ClientCard({ client, onTypeChange }) {
+function ClientCard({ client, onTypeChange, onDelete }) {
   const isContact = client.type === "contact";
 
   const handlePromote = async (e) => {
@@ -148,17 +149,36 @@ function ClientCard({ client, onTypeChange }) {
             )}
           </div>
 
-          {/* Footer: Activity + Value */}
+          {/* Footer: Activity + Value + Actions */}
           <div className="flex items-center justify-between text-xs text-text-muted pt-3 mt-3 border-t border-border-subtle">
             <div className="flex items-center gap-1.5">
               <Clock className="h-3 w-3" />
               <span>{formatRelative(client.last_activity)}</span>
             </div>
-            {client.monthly_value > 0 && (
-              <span className="font-semibold text-brand-gold text-sm">
-                {formatCurrency(client.monthly_value)}<span className="text-xs text-text-muted font-normal">/mo</span>
-              </span>
-            )}
+            <div className="flex items-center gap-2">
+              {client.monthly_value > 0 && (
+                <span className="font-semibold text-brand-gold text-sm">
+                  {formatCurrency(client.monthly_value)}<span className="text-xs text-text-muted font-normal">/mo</span>
+                </span>
+              )}
+              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Link
+                  to={`/clients/${client.id}/edit`}
+                  onClick={e => e.stopPropagation()}
+                  className="rounded p-1 text-text-muted hover:text-brand-gold transition-colors"
+                  title="Edit"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </Link>
+                <button
+                  onClick={e => { e.preventDefault(); e.stopPropagation(); onDelete(client.id); }}
+                  className="rounded p-1 text-text-muted hover:text-red-400 transition-colors"
+                  title="Delete"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </Card>
@@ -184,6 +204,12 @@ export default function Clients() {
 
   const handleTypeChange = (id, newType) => {
     setClients(prev => prev.map(c => c.id === id ? { ...c, type: newType } : c));
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this client?")) return;
+    setClients(prev => prev.filter(c => c.id !== id));
+    try { await deleteClient(id); } catch {}
   };
 
   const filtered = useMemo(() => {
@@ -250,7 +276,7 @@ export default function Clients() {
               <div key={name} className="space-y-3">
                 <h2 className="text-sm font-bold text-text-secondary uppercase tracking-wider px-1">{name} ({cls.length})</h2>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {cls.map((client) => <ClientCard key={client.id} client={client} onTypeChange={handleTypeChange} />)}
+                  {cls.map((client) => <ClientCard key={client.id} client={client} onTypeChange={handleTypeChange} onDelete={handleDelete} />)}
                 </div>
               </div>
             ) : null
@@ -258,7 +284,7 @@ export default function Clients() {
         </div>
       ) : view === "grid" ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filtered.map((client) => <ClientCard key={client.id} client={client} onTypeChange={handleTypeChange} />)}
+          {filtered.map((client) => <ClientCard key={client.id} client={client} onTypeChange={handleTypeChange} onDelete={handleDelete} />)}
         </div>
       ) : (
         <Card className="overflow-hidden p-0">

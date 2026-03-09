@@ -3,248 +3,212 @@ import {
   CheckSquare,
   AlertTriangle,
   Calendar,
-  Filter,
   ChevronDown,
   ChevronRight,
-  Circle,
+  CheckCircle2,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import Card from "../components/Card";
 import Badge from "../components/Badge";
 import { PageLoader } from "../components/Spinner";
 import EmptyState from "../components/EmptyState";
-import { fetchTasks } from "../lib/api";
+import { fetchTasks, completeTask, deleteTask } from "../lib/api";
 import { cn, formatDate } from "../lib/utils";
 
-const PRIORITY_LABELS = {
-  4: { label: "Urgent", color: "text-red-400 bg-red-400/10" },
-  3: { label: "High", color: "text-orange-400 bg-orange-400/10" },
-  2: { label: "Medium", color: "text-blue-400 bg-blue-400/10" },
-  1: { label: "Low", color: "text-gray-400 bg-gray-400/10" },
+const PRIORITY = {
+  4: { label: "Urgent", border: "border-l-red-500",    dot: "bg-red-500",    text: "text-red-400" },
+  3: { label: "High",   border: "border-l-orange-400", dot: "bg-orange-400", text: "text-orange-400" },
+  2: { label: "Medium", border: "border-l-blue-400",   dot: "bg-blue-400",   text: "text-blue-400" },
+  1: { label: "Low",    border: "border-l-gray-500",   dot: "bg-gray-500",   text: "text-gray-500" },
 };
 
+function TaskRow({ task, today, onComplete, onDelete }) {
+  const p = PRIORITY[task.priority] || PRIORITY[1];
+  const isOverdue = task.due_date && task.due_date < today;
+  const isToday   = task.due_date && task.due_date === today;
+
+  return (
+    <div className={cn(
+      "group flex items-center gap-3 px-4 py-2.5 border-l-2 hover:bg-surface-raised/40 transition-colors",
+      p.border,
+      isOverdue && "bg-red-400/5"
+    )}>
+      {/* Complete button */}
+      <button
+        onClick={() => onComplete(task.id)}
+        className="shrink-0 text-text-muted hover:text-emerald-400 transition-colors"
+        title="Mark complete"
+      >
+        <CheckCircle2 className="h-4 w-4" />
+      </button>
+
+      {/* Content */}
+      <div className="min-w-0 flex-1">
+        <p className="text-sm text-text-primary leading-snug">{task.content}</p>
+        {task.due_date && (
+          <span className={cn("text-xs",
+            isOverdue ? "text-red-400 font-medium" :
+            isToday   ? "text-brand-gold font-medium" :
+            "text-text-muted"
+          )}>
+            {isOverdue ? `Overdue · ${formatDate(task.due_date)}` :
+             isToday   ? "Due today" :
+             formatDate(task.due_date)}
+          </span>
+        )}
+      </div>
+
+      {/* Priority dot */}
+      <div className={cn("h-2 w-2 rounded-full shrink-0", p.dot)} title={p.label} />
+
+      {/* Actions — show on hover */}
+      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button
+          onClick={() => onDelete(task.id)}
+          className="rounded p-1 text-text-muted hover:text-red-400 transition-colors"
+          title="Delete"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function Tasks() {
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [filterPriority, setFilterPriority] = useState("all");
-  const [expandedGroups, setExpandedGroups] = useState(new Set());
+  const [tasks, setTasks]               = useState([]);
+  const [loading, setLoading]           = useState(true);
+  const [filterPriority, setFilter]     = useState("all");
+  const [expandedGroups, setExpanded]   = useState(new Set()); // starts empty = all closed
 
   useEffect(() => {
-    fetchTasks()
-      .then(setTasks)
-      .finally(() => setLoading(false));
+    fetchTasks().then(setTasks).finally(() => setLoading(false));
   }, []);
 
   const today = new Date().toISOString().split("T")[0];
 
   const filtered = useMemo(() => {
-    let result = tasks.filter((t) => !t.is_completed);
-    if (filterPriority !== "all") {
-      result = result.filter((t) => t.priority === parseInt(filterPriority));
-    }
-    return result;
+    let r = tasks.filter(t => !t.is_completed);
+    if (filterPriority !== "all") r = r.filter(t => t.priority === parseInt(filterPriority));
+    return r;
   }, [tasks, filterPriority]);
 
-  // Group by client project
   const grouped = useMemo(() => {
-    const groups = {};
-    for (const task of filtered) {
-      const key = task.project_name || "Uncategorized";
-      if (!groups[key]) groups[key] = [];
-      groups[key].push(task);
+    const g = {};
+    for (const t of filtered) {
+      const key = t.owner || t.project_name || "Uncategorized";
+      if (!g[key]) g[key] = [];
+      g[key].push(t);
     }
-    // Sort tasks within each group by due date, then priority
-    for (const key of Object.keys(groups)) {
-      groups[key].sort((a, b) => {
-        const ad = a.due?.date || "9999";
-        const bd = b.due?.date || "9999";
-        if (ad !== bd) return ad.localeCompare(bd);
-        return b.priority - a.priority;
+    for (const k of Object.keys(g)) {
+      g[k].sort((a, b) => {
+        const ad = a.due_date || "9999", bd = b.due_date || "9999";
+        return ad !== bd ? ad.localeCompare(bd) : b.priority - a.priority;
       });
     }
-    return groups;
+    return Object.fromEntries(Object.entries(g).sort(([a],[b]) => a.localeCompare(b)));
   }, [filtered]);
 
-  const toggleGroup = (name) => {
-    setExpandedGroups((prev) => {
-      const next = new Set(prev);
-      if (next.has(name)) next.delete(name);
-      else next.add(name);
-      return next;
-    });
+  const toggleGroup = (name) => setExpanded(prev => {
+    const next = new Set(prev);
+    next.has(name) ? next.delete(name) : next.add(name);
+    return next;
+  });
+
+  const handleComplete = async (id) => {
+    setTasks(prev => prev.map(t => t.id === id ? { ...t, is_completed: true } : t));
+    try { await completeTask(id); } catch {}
   };
 
-  // Expand all by default on first load
-  useEffect(() => {
-    if (Object.keys(grouped).length > 0 && expandedGroups.size === 0) {
-      setExpandedGroups(new Set(Object.keys(grouped)));
-    }
-  }, [grouped]);
+  const handleDelete = async (id) => {
+    setTasks(prev => prev.filter(t => t.id !== id));
+    try { await deleteTask(id); } catch {}
+  };
 
-  const overdue = filtered.filter((t) => t.due && t.due.date < today);
-  const dueToday = filtered.filter((t) => t.due && t.due.date === today);
+  const overdue  = filtered.filter(t => t.due_date && t.due_date < today);
+  const dueToday = filtered.filter(t => t.due_date && t.due_date === today);
 
   if (loading) return <PageLoader />;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-text-primary">Tasks</h1>
-        <p className="text-sm text-text-muted mt-1">
-          {filtered.length} task{filtered.length !== 1 && "s"} remaining
-        </p>
-      </div>
-
-      {/* Summary badges */}
-      <div className="flex flex-wrap gap-3">
-        {overdue.length > 0 && (
-          <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-400/5 px-3 py-2">
-            <AlertTriangle className="h-4 w-4 text-red-400" />
-            <span className="text-sm font-medium text-red-400">
-              {overdue.length} overdue
-            </span>
-          </div>
-        )}
-        {dueToday.length > 0 && (
-          <div className="flex items-center gap-2 rounded-lg border border-brand-gold/30 bg-brand-gold/5 px-3 py-2">
-            <Calendar className="h-4 w-4 text-brand-gold" />
-            <span className="text-sm font-medium text-brand-gold">
-              {dueToday.length} due today
-            </span>
-          </div>
-        )}
+      <div className="flex items-end justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-text-primary">Tasks</h1>
+          <p className="text-sm text-text-muted mt-0.5">{filtered.length} remaining</p>
+        </div>
+        <div className="flex gap-2">
+          {overdue.length > 0 && (
+            <div className="flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-400/5 px-3 py-1.5">
+              <AlertTriangle className="h-3.5 w-3.5 text-red-400" />
+              <span className="text-xs font-medium text-red-400">{overdue.length} overdue</span>
+            </div>
+          )}
+          {dueToday.length > 0 && (
+            <div className="flex items-center gap-1.5 rounded-lg border border-brand-gold/30 bg-brand-gold/5 px-3 py-1.5">
+              <Calendar className="h-3.5 w-3.5 text-brand-gold" />
+              <span className="text-xs font-medium text-brand-gold">{dueToday.length} today</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Priority filter */}
       <div className="flex flex-wrap gap-1.5">
-        <button
-          onClick={() => setFilterPriority("all")}
-          className={cn(
-            "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
-            filterPriority === "all"
-              ? "bg-brand-gold text-brand-navy"
-              : "bg-surface-raised text-text-secondary hover:text-text-primary"
-          )}
-        >
-          All
-        </button>
-        {[4, 3, 2, 1].map((p) => (
-          <button
-            key={p}
-            onClick={() => setFilterPriority(String(p))}
-            className={cn(
-              "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
-              filterPriority === String(p)
+        {[["all","All"],[4,"Urgent"],[3,"High"],[2,"Medium"],[1,"Low"]].map(([val,lbl]) => (
+          <button key={val} onClick={() => setFilter(String(val))}
+            className={cn("rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+              filterPriority === String(val)
                 ? "bg-brand-gold text-brand-navy"
-                : "bg-surface-raised text-text-secondary hover:text-text-primary"
-            )}
-          >
-            {PRIORITY_LABELS[p].label}
+                : "bg-surface-raised text-text-secondary hover:text-text-primary")}>
+            {lbl}
           </button>
         ))}
       </div>
 
-      {/* Grouped tasks */}
+      {/* 2-column grid of accordions */}
       {Object.keys(grouped).length === 0 ? (
-        <EmptyState
-          icon={CheckSquare}
-          title="No tasks found"
-          description="All caught up, or try adjusting your filters."
-        />
+        <EmptyState icon={CheckSquare} title="No tasks" description="All caught up, or adjust filters." />
       ) : (
-        <div className="space-y-3">
+        <div className="columns-1 lg:columns-2 gap-4 space-y-0">
           {Object.entries(grouped).map(([project, projectTasks]) => {
             const isExpanded = expandedGroups.has(project);
-            const projectOverdue = projectTasks.filter(
-              (t) => t.due && t.due.date < today
-            );
+            const overdueCt  = projectTasks.filter(t => t.due_date && t.due_date < today).length;
             return (
-              <Card key={project} className="p-0 overflow-hidden">
-                <button
-                  onClick={() => toggleGroup(project)}
-                  className="flex w-full items-center justify-between px-4 py-3 hover:bg-surface-raised/50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    {isExpanded ? (
-                      <ChevronDown className="h-4 w-4 text-text-muted" />
-                    ) : (
-                      <ChevronRight className="h-4 w-4 text-text-muted" />
-                    )}
-                    <h3 className="text-sm font-semibold text-text-primary">
-                      {project}
-                    </h3>
-                    <span className="text-xs text-text-muted">
-                      {projectTasks.length} task{projectTasks.length !== 1 && "s"}
-                    </span>
-                    {projectOverdue.length > 0 && (
-                      <Badge className="text-red-400 bg-red-400/10">
-                        {projectOverdue.length} overdue
-                      </Badge>
-                    )}
-                  </div>
-                </button>
-                {isExpanded && (
-                  <div className="border-t border-border-subtle divide-y divide-border-subtle">
-                    {projectTasks.map((task) => {
-                      const isOverdue = task.due && task.due.date < today;
-                      const isToday = task.due && task.due.date === today;
-                      return (
-                        <div
+              <div key={project} className="break-inside-avoid mb-3">
+                <Card className="p-0 overflow-hidden">
+                  <button
+                    onClick={() => toggleGroup(project)}
+                    className="flex w-full items-center justify-between px-4 py-2.5 hover:bg-surface-raised/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      {isExpanded
+                        ? <ChevronDown className="h-3.5 w-3.5 text-text-muted shrink-0" />
+                        : <ChevronRight className="h-3.5 w-3.5 text-text-muted shrink-0" />}
+                      <span className="text-sm font-semibold text-text-primary truncate">{project}</span>
+                      <span className="text-xs text-text-muted shrink-0">{projectTasks.length}</span>
+                      {overdueCt > 0 && (
+                        <span className="text-xs text-red-400 shrink-0">{overdueCt} overdue</span>
+                      )}
+                    </div>
+                  </button>
+                  {isExpanded && (
+                    <div className="border-t border-border-subtle divide-y divide-border-subtle/50">
+                      {projectTasks.map(task => (
+                        <TaskRow
                           key={task.id}
-                          className={cn(
-                            "flex items-start gap-3 px-4 py-3",
-                            isOverdue && "bg-red-400/5"
-                          )}
-                        >
-                          <Circle
-                            className={cn(
-                              "mt-0.5 h-4 w-4 shrink-0",
-                              task.priority === 4
-                                ? "text-red-400"
-                                : task.priority === 3
-                                ? "text-orange-400"
-                                : task.priority === 2
-                                ? "text-blue-400"
-                                : "text-gray-500"
-                            )}
-                          />
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm text-text-primary">
-                              {task.content}
-                            </p>
-                            <div className="mt-1 flex flex-wrap items-center gap-2">
-                              <Badge className={PRIORITY_LABELS[task.priority].color}>
-                                {PRIORITY_LABELS[task.priority].label}
-                              </Badge>
-                              {task.due && (
-                                <span
-                                  className={cn(
-                                    "text-xs",
-                                    isOverdue
-                                      ? "text-red-400 font-medium"
-                                      : isToday
-                                      ? "text-brand-gold font-medium"
-                                      : "text-text-muted"
-                                  )}
-                                >
-                                  {isOverdue
-                                    ? `Overdue — ${formatDate(task.due.date)}`
-                                    : isToday
-                                    ? "Due today"
-                                    : formatDate(task.due.date)}
-                                </span>
-                              )}
-                              {task.labels?.map((label) => (
-                                <Badge key={label}>{label}</Badge>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </Card>
+                          task={task}
+                          today={today}
+                          onComplete={handleComplete}
+                          onDelete={handleDelete}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </Card>
+              </div>
             );
           })}
         </div>

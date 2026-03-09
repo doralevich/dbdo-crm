@@ -188,3 +188,12 @@ export const fetchDashboardStats = () => request("/dashboard/stats");
 
 // Team
 export const fetchTeam = () => request("/team");
+
+export const completeTask = (id) =>
+  request(`/tasks/${id}`, { method: "PATCH", body: JSON.stringify({ is_completed: true }) });
+
+export const deleteTask = (id) =>
+  request(`/tasks/${id}`, { method: "DELETE" });
+
+export const deleteClient = (id) =>
+  request(`/clients/${id}`, { method: "DELETE" });
