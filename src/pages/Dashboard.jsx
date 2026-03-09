@@ -127,18 +127,18 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-5">
-      {/* ── Top bar: date/time + Add Task */}
-      <div className="flex items-start justify-between gap-4 flex-wrap">
+      {/* ── Top bar */}
+      <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">
+          <p className="text-[13px] font-medium text-white/40 tracking-wide">
             {now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
-          </h1>
-          <p className="text-3xl font-mono font-semibold text-brand-gold mt-0.5 tracking-tight">
-            {now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit" })}
           </p>
+          <h1 className="text-4xl font-bold text-white tracking-tight leading-none mt-1" style={{ fontVariantNumeric: "tabular-nums" }}>
+            {now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit" })}
+          </h1>
         </div>
         <button onClick={() => setShowAdd(true)}
-          className="flex items-center gap-1.5 rounded-xl bg-brand-gold px-4 py-2.5 text-sm font-semibold text-brand-navy hover:bg-brand-gold/90 transition-colors">
+          className="flex items-center gap-1.5 rounded-xl bg-brand-gold px-4 py-2.5 text-[13px] font-semibold text-black hover:bg-brand-gold/90 active:scale-95 transition-all">
           <Plus className="h-4 w-4" /> Add Task
         </button>
       </div>
@@ -146,62 +146,66 @@ export default function Dashboard() {
       {/* ── Weather + Stocks row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-        {/* Weather */}
-        <Card className="p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">{curWx.emoji}</span>
+        {/* Weather widget */}
+        <div className="rounded-2xl overflow-hidden relative" style={{
+          background: "linear-gradient(145deg, #1A3A5C 0%, #0D2137 60%, #0A1929 100%)",
+          border: "1px solid rgba(255,255,255,0.10)"
+        }}>
+          <div className="p-5">
+            <p className="text-[11px] font-semibold text-white/40 uppercase tracking-widest mb-3">Roslyn, NY</p>
+            <div className="flex items-start justify-between">
               <div>
-                <p className="text-xl font-bold text-text-primary leading-none">
-                  {cur ? `${Math.round(cur.temperature_2m)}°F` : "—"}
+                <p className="text-5xl font-thin text-white tracking-tighter leading-none">
+                  {cur ? `${Math.round(cur.temperature_2m)}°` : "—"}
                 </p>
-                <p className="text-xs text-text-muted mt-0.5">{curWx.label} · Roslyn, NY</p>
+                <p className="text-sm text-white/60 mt-1.5">{curWx.label}</p>
+                {cur && <p className="text-xs text-white/40 mt-0.5">Wind {Math.round(cur.windspeed_10m)} mph</p>}
               </div>
+              <span className="text-5xl">{curWx.emoji}</span>
             </div>
-            {cur && (
-              <p className="text-xs text-text-muted">{Math.round(cur.windspeed_10m)} mph</p>
+            {daily && (
+              <div className="grid grid-cols-5 gap-1.5 mt-5 pt-4 border-t border-white/10">
+                {[0,1,2,3,4].map(i => {
+                  const d = new Date(daily.time[i] + "T12:00:00");
+                  const wx = weatherLabel(daily.weathercode[i]);
+                  return (
+                    <div key={i} className="flex flex-col items-center gap-1">
+                      <span className="text-[10px] font-medium text-white/40">{i === 0 ? "Now" : DAY[d.getDay()]}</span>
+                      <span className="text-lg leading-none">{wx.emoji}</span>
+                      <span className="text-[11px] font-semibold text-white">{Math.round(daily.temperature_2m_max[i])}°</span>
+                      <span className="text-[10px] text-white/40">{Math.round(daily.temperature_2m_min[i])}°</span>
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </div>
-          {/* 5-day forecast */}
-          {daily && (
-            <div className="grid grid-cols-5 gap-1">
-              {[0,1,2,3,4].map(i => {
-                const d = new Date(daily.time[i] + "T12:00:00");
-                const wx = weatherLabel(daily.weathercode[i]);
-                return (
-                  <div key={i} className="flex flex-col items-center gap-0.5 rounded-lg bg-white/5 py-2 px-1">
-                    <span className="text-[10px] font-medium text-text-muted">{i === 0 ? "Today" : DAY[d.getDay()]}</span>
-                    <span className="text-base">{wx.emoji}</span>
-                    <span className="text-[11px] font-semibold text-text-primary">{Math.round(daily.temperature_2m_max[i])}°</span>
-                    <span className="text-[10px] text-text-muted">{Math.round(daily.temperature_2m_min[i])}°</span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </Card>
+        </div>
 
-        {/* Stocks */}
-        <Card className="p-4">
-          <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-3">Markets</p>
+        {/* Markets widget */}
+        <div className="rounded-2xl p-5" style={{ background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.10)" }}>
+          <p className="text-[11px] font-semibold text-white/40 uppercase tracking-widest mb-4">Markets</p>
           {!stocks ? (
-            <p className="text-xs text-text-muted">Loading…</p>
+            <p className="text-xs text-white/30">Loading…</p>
           ) : (
-            <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-3">
               {stocks.map(s => {
-                const up = s.pct >= 0;
+                const up = s.pct == null ? true : s.pct >= 0;
                 return (
-                  <div key={s.sym} className={cn(
-                    "flex items-center justify-between rounded-lg border px-3 py-2",
-                    up ? "border-emerald-500/20 bg-emerald-500/5" : "border-red-500/20 bg-red-500/5"
-                  )}>
+                  <div key={s.sym} className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-semibold text-text-primary">{s.label}</p>
-                      <p className="text-[10px] text-text-muted">
-                        {s.price != null ? (s.price > 1000 ? s.price.toLocaleString("en-US", {maximumFractionDigits:0}) : s.price.toLocaleString("en-US", {maximumFractionDigits:2})) : "—"}
+                      <p className="text-[13px] font-medium text-white">{s.label}</p>
+                      <p className="text-[11px] text-white/40 mt-0.5">
+                        {s.price != null ? (s.price > 1000
+                          ? s.price.toLocaleString("en-US", { maximumFractionDigits: 0 })
+                          : s.price.toLocaleString("en-US", { maximumFractionDigits: 2 }))
+                          : "—"}
                       </p>
                     </div>
-                    <span className={cn("text-xs font-semibold", up ? "text-emerald-400" : "text-red-400")}>
+                    <span className={cn(
+                      "text-sm font-semibold tabular-nums rounded-lg px-2.5 py-1",
+                      up ? "text-emerald-400 bg-emerald-400/10" : "text-red-400 bg-red-400/10"
+                    )}>
                       {s.pct != null ? `${up ? "+" : ""}${s.pct.toFixed(2)}%` : "—"}
                     </span>
                   </div>
@@ -209,14 +213,14 @@ export default function Dashboard() {
               })}
             </div>
           )}
-          <p className="text-[10px] text-text-muted/50 mt-2 text-right">via Yahoo Finance · 15min delay</p>
-        </Card>
+          <p className="text-[10px] text-white/20 mt-4">15 min delay · Yahoo Finance</p>
+        </div>
       </div>
 
 
 
       {/* ── Main content */}
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2">
 
         {/* Today's Priorities */}
         <Card>

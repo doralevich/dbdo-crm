@@ -1,57 +1,59 @@
 @import "tailwindcss";
 
 @theme {
-  /* DBDO Brand Colors */
-  --color-brand-gold: #D4A843;
-  --color-brand-gold-light: #E8C872;
-  --color-brand-gold-dark: #B8922F;
-  --color-brand-navy: #1a3352;
-  --color-brand-navy-dark: #111318;
-  --color-brand-navy-light: #24426b;
-  --color-brand-navy-lighter: #2e5282;
+  /* Brand */
+  --color-brand-gold:       #F5A623;
+  --color-brand-gold-light: #F7BC5A;
+  --color-brand-gold-dark:  #D4891A;
+  --color-brand-navy:       #1C1C1E;
 
-  /* Light theme semantic */
-  --color-surface: #FFFFFF;
-  --color-surface-raised: #F4F5F7;
-  --color-surface-overlay: #E8EAF0;
-  --color-border-subtle: #E5E7EB;
-  --color-border-default: #D1D5DB;
-  --color-text-primary: #111318;
-  --color-text-secondary: #4B5563;
-  --color-text-muted: #9CA3AF;
+  /* Apple dark system surfaces */
+  --color-surface-base:     #000000;
+  --color-surface:          #1C1C1E;
+  --color-surface-raised:   #2C2C2E;
+  --color-surface-overlay:  #3A3A3C;
+  --color-surface-elevated: #48484A;
 
-  --font-family-sans: "Inter", system-ui, -apple-system, sans-serif;
-}
+  /* Borders */
+  --color-border-subtle:    rgba(255,255,255,0.10);
+  --color-border-default:   rgba(255,255,255,0.16);
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #D1D5DB;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #9CA3AF;
+  /* Text */
+  --color-text-primary:     #FFFFFF;
+  --color-text-secondary:   rgba(255,255,255,0.72);
+  --color-text-muted:       rgba(255,255,255,0.40);
+  --color-text-disabled:    rgba(255,255,255,0.24);
+
+  /* System accent */
+  --color-accent:           #F5A623;
+
+  /* Font — SF Pro on Apple devices */
+  --font-family-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
 }
 
-* {
-  scrollbar-color: #D1D5DB transparent;
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+* { scrollbar-color: rgba(255,255,255,0.15) transparent; }
 
-/* DBDO Brand CSS variables */
-:root {
-  --brand-navy: #1a3352;
-  --brand-gold: #D4A843;
-}
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
 body {
   font-family: var(--font-family-sans);
   font-size: 15px;
-  color: #111318;
-  background: #F4F5F7;
+  color: #FFFFFF;
+  background: #000000;
+  letter-spacing: -0.01em;
 }
+
+/* Selection */
+::selection { background: rgba(245,166,35,0.28); }
+
+/* Date input dark */
+input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.4); }
+
+/* Focus ring */
+*:focus-visible { outline: 2px solid rgba(245,166,35,0.6); outline-offset: 2px; border-radius: 6px; }

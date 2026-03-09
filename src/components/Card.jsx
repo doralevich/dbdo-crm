@@ -4,7 +4,8 @@ export default function Card({ children, className, ...props }) {
   return (
     <div
       className={cn(
-        "rounded-xl border border-border-subtle bg-surface p-5 transition-colors",
+        "rounded-2xl bg-surface p-5 transition-colors",
+        "border border-border-subtle",
         className
       )}
       {...props}
@@ -20,7 +21,7 @@ export function CardHeader({ children, className }) {
 
 export function CardTitle({ children, className }) {
   return (
-    <h3 className={cn("text-sm font-semibold text-text-primary", className)}>
+    <h3 className={cn("text-sm font-semibold text-text-primary tracking-tight", className)}>
       {children}
     </h3>
   );
