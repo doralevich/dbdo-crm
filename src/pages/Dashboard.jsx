@@ -10,6 +10,7 @@ import Card, { CardHeader, CardTitle } from "../components/Card";
 import Badge from "../components/Badge";
 import { PageLoader } from "../components/Spinner";
 import AddTaskModal from "../components/AddTaskModal";
+import TaskDrawer from "../components/TaskDrawer";
 import { fetchDashboardStats, fetchTasks, fetchEvents, fetchClients } from "../lib/api";
 import { cn, formatCurrency, formatRelative, formatTime, getStatusColor } from "../lib/utils";
 
@@ -84,7 +85,8 @@ export default function Dashboard() {
   const [events, setEvents]   = useState([]);
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showAdd, setShowAdd] = useState(false);
+  const [showAdd, setShowAdd]       = useState(false);
+  const [selectedTask, setSelected] = useState(null);
 
   const now     = useClock();
   const weather = useWeather();
@@ -238,8 +240,8 @@ export default function Dashboard() {
             ) : urgentTasks.map((task) => {
               const isOverdue = task.due_date && task.due_date < today;
               return (
-                <Link key={task.id} to="/tasks"
-                  className="flex items-start gap-3 rounded-lg border border-border-subtle p-3 hover:border-brand-gold/30 transition-colors">
+                <button key={task.id} onClick={() => setSelected(task)}
+                  className="w-full flex items-start gap-3 rounded-lg border border-border-subtle p-3 hover:border-brand-gold/30 transition-colors text-left">
                   <div className={cn("mt-1 h-2 w-2 shrink-0 rounded-full",
                     task.priority === 4 ? "bg-red-500" : task.priority === 3 ? "bg-orange-400" : "bg-blue-400"
                   )} />
@@ -250,7 +252,7 @@ export default function Dashboard() {
                       {isOverdue && <span className="text-xs text-red-400 font-medium">Overdue</span>}
                     </div>
                   </div>
-                </Link>
+                </button>
               );
             })}
           </div>
@@ -321,6 +323,19 @@ export default function Dashboard() {
 
       {showAdd && (
         <AddTaskModal clients={clients} onClose={() => setShowAdd(false)} onAdd={() => setShowAdd(false)} />
+      )}
+
+      {selectedTask && (
+        <TaskDrawer
+          task={selectedTask}
+          clients={clients}
+          onClose={() => setSelected(null)}
+          onUpdate={(updated) => {
+            if (updated.is_completed) setTasks(prev => prev.filter(t => t.id !== updated.id));
+            else setTasks(prev => prev.map(t => t.id === updated.id ? { ...t, ...updated } : t));
+          }}
+          onDelete={(id) => setTasks(prev => prev.filter(t => t.id !== id))}
+        />
       )}
     </div>
   );
