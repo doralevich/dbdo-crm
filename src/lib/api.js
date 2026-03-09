@@ -197,3 +197,5 @@ export const deleteTask = (id) =>
 
 export const deleteClient = (id) =>
   request(`/clients/${id}`, { method: "DELETE" });
+
+export const fetchTaskClients = () => request("/tasks/clients");

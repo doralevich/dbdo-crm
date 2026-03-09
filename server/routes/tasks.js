@@ -5,6 +5,33 @@ const router = Router();
 
 const PRIORITY_LABEL = { 1: "low", 2: "medium", 3: "high", 4: "urgent" };
 
+// GET /api/tasks/clients — clients that have open tasks
+router.get("/clients", async (req, res) => {
+  try {
+    if (!supabase) return res.json([]);
+    const { data, error } = await supabase
+      .from("tasks")
+      .select("owner, client_id")
+      .eq("is_completed", false);
+    if (error) throw new Error(error.message);
+
+    // Get unique owner names, sorted alphabetically
+    const seen = new Set();
+    const clients = [];
+    for (const t of data || []) {
+      const name = t.owner;
+      if (name && !seen.has(name)) {
+        seen.add(name);
+        clients.push({ id: t.client_id, name });
+      }
+    }
+    clients.sort((a, b) => a.name.localeCompare(b.name));
+    res.json(clients);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // GET /api/tasks
 router.get("/", async (req, res) => {
   try {
@@ -31,9 +58,11 @@ router.get("/", async (req, res) => {
     const tasks = (data || []).map(t => ({
       id: t.id,
       content: t.content,
-      project_name: t.labels?.[0] || "General",
+      owner: t.owner || t.labels?.[0] || "General",
+      project_name: t.owner || t.labels?.[0] || "General",
       priority: t.priority,
       priority_label: PRIORITY_LABEL[t.priority] || "medium",
+      due_date: t.due_date || null,
       due: t.due_date ? { date: t.due_date } : null,
       is_completed: t.is_completed,
       labels: t.labels || [],
@@ -75,6 +104,18 @@ router.patch("/:id", async (req, res) => {
       .single();
     if (error) throw new Error(error.message);
     res.json({ success: true, task: data });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// DELETE /api/tasks/:id
+router.delete("/:id", async (req, res) => {
+  try {
+    if (!supabase) return res.status(503).json({ message: "No database" });
+    const { error } = await supabase.from("tasks").delete().eq("id", req.params.id);
+    if (error) throw new Error(error.message);
+    res.json({ success: true });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

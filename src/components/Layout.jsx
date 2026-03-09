@@ -11,7 +11,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { fetchClients } from "../lib/api";
+import { fetchTaskClients } from "../lib/api";
 import { cn } from "../lib/utils";
 
 const navItems = [
@@ -30,16 +30,12 @@ export default function Layout({ children }) {
   const [taskClients, setTaskClients] = useState([]);
   const location = useLocation();
 
-  // Load clients that have tasks for the sidebar
+  // Load only clients with open tasks — re-fetch when expanded or location changes
   useEffect(() => {
-    if (tasksExpanded && taskClients.length === 0) {
-      fetchClients().then(all => {
-        // Sort alphabetically, take those with tasks (we'll show top 20 for now)
-        const sorted = [...all].sort((a, b) => a.name.localeCompare(b.name)).slice(0, 40);
-        setTaskClients(sorted);
-      });
+    if (tasksExpanded) {
+      fetchTaskClients().then(setTaskClients).catch(() => {});
     }
-  }, [tasksExpanded]);
+  }, [tasksExpanded, location.pathname]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-surface-raised">
