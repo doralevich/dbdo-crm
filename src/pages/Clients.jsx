@@ -84,10 +84,9 @@ function ClientCard({ client }) {
   return (
     <Link to={`/clients/${client.id}`}>
       <Card className="group hover:border-brand-gold/30 cursor-pointer h-full transition-all hover:shadow-lg hover:shadow-brand-gold/5">
-        {/* Header: Logo + Name */}
+        {/* Header: Name */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3 min-w-0">
-            <ClientLogo client={client} size="md" />
             <div className="min-w-0">
               <h3 className="text-base font-bold text-text-primary truncate group-hover:text-brand-gold transition-colors leading-tight">
                 {client.name}
@@ -114,15 +113,7 @@ function ClientCard({ client }) {
           <ArrowRight className="h-4 w-4 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity shrink-0 mt-1" />
         </div>
 
-        {/* Badges */}
-        <div className="flex flex-wrap gap-1.5 mb-3">
-          <Badge className={getStatusColor(client.type)}>
-            {client.type}
-          </Badge>
-          <Badge className={getStatusColor(client.status)}>
-            {client.status}
-          </Badge>
-        </div>
+
 
         {/* Footer: Activity + Value */}
         <div className="flex items-center justify-between text-xs text-text-muted pt-3 border-t border-border-subtle">
