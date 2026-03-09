@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link, useSearchParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import {
   ArrowLeft,
   Globe,
@@ -8,7 +8,6 @@ import {
   FileText,
   MessageSquare,
   CheckSquare,
-  DollarSign,
   Clock,
   Plus,
   Send,
@@ -26,7 +25,6 @@ import { PageLoader } from "../components/Spinner";
 import EmptyState from "../components/EmptyState";
 import {
   fetchClient,
-  fetchProposals,
   fetchInteractions,
   fetchTasks,
   createInteraction,
@@ -52,12 +50,11 @@ const INTERACTION_ICONS = {
 export default function ClientDetail() {
   const { id } = useParams();
   const [client, setClient] = useState(null);
-  const [proposals, setProposals] = useState([]);
+
   const [interactions, setInteractions] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "overview");
+  const [activeTab, setActiveTab] = useState("overview");
   const [showNoteForm, setShowNoteForm] = useState(false);
   const [noteType, setNoteType] = useState("note");
   const [noteSummary, setNoteSummary] = useState("");
@@ -68,14 +65,12 @@ export default function ClientDetail() {
     setLoading(true);
     Promise.all([
       fetchClient(id),
-      fetchProposals(id),
       fetchInteractions(id),
       fetchTasks(),
     ])
-      .then(([c, p, i, t]) => {
+      .then(([c, i, t]) => {
         setClient(c);
         setNotesText(c.notes || "");
-        setProposals(p);
         setInteractions(i);
         setTasks(
           t.filter(
@@ -151,7 +146,7 @@ export default function ClientDetail() {
   const tabs = [
     { key: "overview", label: "Overview" },
     { key: "tasks", label: "Tasks", count: tasks.filter((t) => !t.is_completed).length },
-    { key: "proposals", label: "Proposals", count: proposals.length },
+
     { key: "activity", label: "Activity", count: interactions.length },
   ];
 
@@ -478,29 +473,9 @@ export default function ClientDetail() {
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-text-muted">Proposals</span>
+                <span className="text-sm text-text-muted">Completed Tasks</span>
                 <span className="text-sm font-semibold text-text-primary">
-                  {proposals.length}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-text-muted">Pipeline Value</span>
-                <span className="text-sm font-semibold text-brand-gold">
-                  {formatCurrency(
-                    proposals
-                      .filter((p) => p.status === "sent" || p.status === "draft")
-                      .reduce((s, p) => s + (p.amount || 0), 0)
-                  )}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-text-muted">Won Value</span>
-                <span className="text-sm font-semibold text-emerald-600">
-                  {formatCurrency(
-                    proposals
-                      .filter((p) => p.status === "won")
-                      .reduce((s, p) => s + (p.amount || 0), 0)
-                  )}
+                  {tasks.filter((t) => t.is_completed).length}
                 </span>
               </div>
               {client.monthly_value > 0 && (
@@ -621,52 +596,7 @@ export default function ClientDetail() {
         </div>
       )}
 
-      {activeTab === "proposals" && (
-        <div className="space-y-3">
-          {proposals.length === 0 ? (
-            <EmptyState
-              icon={DollarSign}
-              title="No proposals"
-              description="Create a proposal for this client."
-            />
-          ) : (
-            proposals.map((proposal) => (
-              <Card key={proposal.id} className="p-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h4 className="text-sm font-semibold text-text-primary">
-                      {proposal.title}
-                    </h4>
-                    <div className="mt-1 flex items-center gap-3">
-                      <span className="text-lg font-bold text-brand-gold">
-                        {formatCurrency(proposal.amount)}
-                      </span>
-                      <Badge className={getStatusColor(proposal.status)}>
-                        {proposal.status}
-                      </Badge>
-                    </div>
-                    {proposal.notes && (
-                      <p className="mt-2 text-xs text-text-muted">
-                        {proposal.notes}
-                      </p>
-                    )}
-                  </div>
-                  <div className="text-right text-xs text-text-muted shrink-0">
-                    {proposal.sent_at && (
-                      <p>Sent {formatDate(proposal.sent_at)}</p>
-                    )}
-                    {proposal.follow_up_at && (
-                      <p className="text-brand-gold">
-                        Follow up {formatDate(proposal.follow_up_at)}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </Card>
-            ))
-          )}
-        </div>
-      )}
+
 
       {activeTab === "activity" && (
         <div className="space-y-3">
