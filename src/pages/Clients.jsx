@@ -197,7 +197,7 @@ export default function Clients() {
       c.contact_email?.toLowerCase().includes(search.toLowerCase()) ||
       c.website?.toLowerCase().includes(search.toLowerCase())
     );
-    return list;
+    return [...list].sort((a, b) => a.name.localeCompare(b.name));
   }, [clients, filter, search]);
 
   const categories = useMemo(() => categorizeClients(filtered), [filtered]);

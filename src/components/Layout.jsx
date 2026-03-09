@@ -26,7 +26,20 @@ const navItems = [
 
 export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [tasksExpanded, setTasksExpanded] = useState(false);
+  const [taskClients, setTaskClients] = useState([]);
   const location = useLocation();
+
+  // Load clients that have tasks for the sidebar
+  useEffect(() => {
+    if (tasksExpanded && taskClients.length === 0) {
+      fetchClients().then(all => {
+        // Sort alphabetically, take those with tasks (we'll show top 20 for now)
+        const sorted = [...all].sort((a, b) => a.name.localeCompare(b.name)).slice(0, 40);
+        setTaskClients(sorted);
+      });
+    }
+  }, [tasksExpanded]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-surface-raised">
@@ -63,21 +76,52 @@ export default function Layout({ children }) {
               to === "/"
                 ? location.pathname === "/"
                 : location.pathname.startsWith(to);
+            const isTasks = to === "/tasks";
             return (
-              <NavLink
-                key={to}
-                to={to}
-                onClick={() => setSidebarOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                  isActive
-                    ? "bg-brand-gold/15 text-brand-gold"
-                    : "text-gray-400 hover:bg-white/5 hover:text-white"
+              <div key={to}>
+                <div className="flex items-center">
+                  <NavLink
+                    to={to}
+                    onClick={() => setSidebarOpen(false)}
+                    className={cn(
+                      "flex flex-1 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-brand-gold/15 text-brand-gold"
+                        : "text-gray-400 hover:bg-white/5 hover:text-white"
+                    )}
+                  >
+                    <Icon className="h-4.5 w-4.5 shrink-0" />
+                    {label}
+                  </NavLink>
+                  {isTasks && (
+                    <button
+                      onClick={() => setTasksExpanded(e => !e)}
+                      className="p-1.5 text-gray-500 hover:text-gray-300 transition-colors"
+                    >
+                      {tasksExpanded ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                    </button>
+                  )}
+                </div>
+                {isTasks && tasksExpanded && (
+                  <div className="ml-8 mt-0.5 space-y-0.5 max-h-64 overflow-y-auto">
+                    {taskClients.map(client => (
+                      <NavLink
+                        key={client.id}
+                        to={`/tasks?client=${client.id}`}
+                        onClick={() => setSidebarOpen(false)}
+                        className={cn(
+                          "flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors truncate",
+                          location.search.includes(client.id)
+                            ? "text-brand-gold bg-brand-gold/10"
+                            : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
+                        )}
+                      >
+                        <span className="truncate">{client.name}</span>
+                      </NavLink>
+                    ))}
+                  </div>
                 )}
-              >
-                <Icon className="h-4.5 w-4.5 shrink-0" />
-                {label}
-              </NavLink>
+              </div>
             );
           })}
         </nav>
