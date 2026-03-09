@@ -49,32 +49,25 @@ function weatherLabel(code) {
 
 const DAY = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
-// ── Stocks via Yahoo Finance proxy (no key needed)
 const TICKERS = [
-  { sym: "^GSPC", label: "S&P 500" },
-  { sym: "^DJI",  label: "Dow" },
-  { sym: "^IXIC", label: "Nasdaq" },
-  { sym: "BTC-USD", label: "BTC" },
+  { sym: "^GSPC",   label: "S&P 500" },
+  { sym: "^DJI",    label: "Dow"     },
+  { sym: "^IXIC",   label: "Nasdaq"  },
+  { sym: "BTC-USD", label: "BTC"     },
 ];
 function useStocks() {
   const [stocks, setStocks] = useState(null);
   useEffect(() => {
-    const symbols = TICKERS.map(t => t.sym).join(",");
-    fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbols)}&fields=regularMarketPrice,regularMarketChangePercent&corsDomain=finance.yahoo.com`)
+    const token = localStorage.getItem("crm_token");
+    fetch("/api/quotes", { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
-      .then(d => {
-        const quotes = d?.quoteResponse?.result || [];
-        setStocks(quotes.map(q => ({
-          sym: q.symbol,
-          label: TICKERS.find(t => t.sym === q.symbol)?.label || q.symbol,
-          price: q.regularMarketPrice,
-          pct: q.regularMarketChangePercent,
-        })));
+      .then(quotes => {
+        setStocks(TICKERS.map(t => {
+          const q = quotes.find(x => x.sym === t.sym) || {};
+          return { ...t, price: q.price ?? null, pct: q.pct ?? null };
+        }));
       })
-      .catch(() => {
-        // Fallback mock so the widget still renders
-        setStocks(TICKERS.map(t => ({ ...t, price: null, pct: null })));
-      });
+      .catch(() => setStocks(TICKERS.map(t => ({ ...t, price: null, pct: null }))));
   }, []);
   return stocks;
 }

@@ -13,7 +13,7 @@ const PRIORITY = {
 export default function AddTaskModal({ clients = [], onClose, onAdd }) {
   const [content,  setContent]  = useState("");
   const [priority, setPriority] = useState(2);
-  const [dueDate,  setDueDate]  = useState("");
+  const [dueDate,  setDueDate]  = useState(new Date().toISOString().split("T")[0]);
   const [clientId, setClientId] = useState("");
   const [saving,   setSaving]   = useState(false);
   const [error,    setError]    = useState(null);
@@ -49,35 +49,38 @@ export default function AddTaskModal({ clients = [], onClose, onAdd }) {
     <>
       <div className="fixed inset-0 bg-black/50 z-40" onClick={onClose} />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-lg bg-surface-base rounded-2xl border border-border-subtle shadow-2xl">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-border-subtle">
-            <h2 className="text-base font-semibold text-text-primary">Add Task</h2>
-            <button onClick={onClose} className="rounded-lg p-1.5 text-text-muted hover:text-text-primary transition-colors">
+        <div className="w-full max-w-md rounded-2xl shadow-2xl overflow-hidden"
+          style={{ background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.12)" }}>
+
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 pt-5 pb-4">
+            <h2 className="text-base font-semibold text-white tracking-tight">New Task</h2>
+            <button onClick={onClose} className="rounded-full p-1.5 text-white/30 hover:text-white/70 hover:bg-white/8 transition-colors">
               <X className="h-4 w-4" />
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-5 space-y-4">
+          <form onSubmit={handleSubmit} className="px-5 pb-5 space-y-4">
             {error && <p className="text-xs text-red-400">{error}</p>}
 
             {/* Task name */}
-            <input
-              autoFocus
-              value={content}
-              onChange={e => setContent(e.target.value)}
+            <input autoFocus value={content} onChange={e => setContent(e.target.value)}
               placeholder="Task name…"
-              className="w-full rounded-lg border border-border-default bg-surface-raised px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-1 focus:ring-brand-gold placeholder:text-text-muted/50"
+              className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-1 focus:ring-brand-gold"
+              style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.10)" }}
             />
 
             {/* Priority */}
             <div>
-              <label className="block text-xs font-medium text-text-muted mb-1.5">Priority</label>
-              <div className="flex gap-2">
+              <p className="text-[11px] font-semibold text-white/35 uppercase tracking-widest mb-2">Priority</p>
+              <div className="grid grid-cols-4 gap-1.5">
                 {[4,3,2,1].map(p => (
                   <button key={p} type="button" onClick={() => setPriority(p)}
-                    className={cn("flex-1 rounded-lg py-1.5 text-xs font-medium border transition-colors",
-                      priority === p ? `${PRIORITY[p].bg} ${PRIORITY[p].color} ${PRIORITY[p].border}` : "border-border-default text-text-muted hover:text-text-primary"
-                    )}>
+                    className={cn("rounded-xl py-2 text-[12px] font-semibold transition-all",
+                      priority === p
+                        ? `${PRIORITY[p].bg} ${PRIORITY[p].color} ${PRIORITY[p].border} border`
+                        : "text-white/40 hover:text-white/70 border border-transparent hover:border-white/10"
+                    )} style={priority !== p ? { background: "rgba(255,255,255,0.05)" } : {}}>
                     {PRIORITY[p].label}
                   </button>
                 ))}
@@ -87,30 +90,34 @@ export default function AddTaskModal({ clients = [], onClose, onAdd }) {
             {/* Client + Due Date */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-text-muted mb-1.5">Client</label>
+                <p className="text-[11px] font-semibold text-white/35 uppercase tracking-widest mb-2">Client</p>
                 <select value={clientId} onChange={e => setClientId(e.target.value)}
-                  className="w-full rounded-lg border border-border-default bg-surface-raised px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-1 focus:ring-brand-gold">
+                  className="w-full rounded-xl px-3 py-2.5 text-[13px] text-white focus:outline-none focus:ring-1 focus:ring-brand-gold"
+                  style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.10)" }}>
                   <option value="">— None —</option>
-                  {[...clients].sort((a,b)=>a.name.localeCompare(b.name)).filter(c => c.status !== "contact").map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
+                  {[...clients].sort((a,b)=>a.name.localeCompare(b.name))
+                    .filter(c => !["contact"].includes(c.type))
+                    .map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-text-muted mb-1.5">Due Date</label>
+                <p className="text-[11px] font-semibold text-white/35 uppercase tracking-widest mb-2">Due Date</p>
                 <input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)}
-                  className="w-full rounded-lg border border-border-default bg-surface-raised px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-1 focus:ring-brand-gold"
+                  className="w-full rounded-xl px-3 py-2.5 text-[13px] text-white focus:outline-none focus:ring-1 focus:ring-brand-gold"
+                  style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.10)", colorScheme: "dark" }}
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-1">
+            {/* Actions */}
+            <div className="flex gap-2 pt-1">
               <button type="button" onClick={onClose}
-                className="rounded-lg px-4 py-2 text-sm text-text-secondary hover:text-text-primary transition-colors">
+                className="flex-1 rounded-xl py-2.5 text-[13px] font-medium text-white/40 hover:text-white/70 transition-colors"
+                style={{ background: "rgba(255,255,255,0.06)" }}>
                 Cancel
               </button>
               <button type="submit" disabled={saving || !content.trim()}
-                className="rounded-lg px-5 py-2 bg-brand-gold text-brand-navy text-sm font-semibold hover:bg-brand-gold/90 disabled:opacity-50 transition-colors">
+                className="flex-1 rounded-xl py-2.5 bg-brand-gold text-black text-[13px] font-semibold hover:bg-brand-gold/90 active:scale-95 disabled:opacity-40 transition-all">
                 {saving ? "Adding…" : "Add Task"}
               </button>
             </div>

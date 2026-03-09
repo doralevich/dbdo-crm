@@ -43,6 +43,24 @@ app.use("/api/dashboard", dashboardRouter);
 app.use("/api/team", teamRouter);
 app.use("/api/contacts", contactsRouter);
 
+// Stock quote proxy — avoids CORS issues from the browser
+app.get("/api/quotes", async (req, res) => {
+  try {
+    const symbols = "^GSPC,^DJI,^IXIC,BTC-USD";
+    const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbols)}&fields=regularMarketPrice,regularMarketChangePercent`;
+    const r = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
+    const data = await r.json();
+    const quotes = (data?.quoteResponse?.result || []).map(q => ({
+      sym: q.symbol,
+      price: q.regularMarketPrice ?? null,
+      pct: q.regularMarketChangePercent ?? null,
+    }));
+    res.json(quotes);
+  } catch {
+    res.json([]);
+  }
+});
+
 // Serve static files in production
 const distPath = join(__dirname, "..", "dist");
 app.use(express.static(distPath));
