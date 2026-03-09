@@ -101,8 +101,8 @@ export async function request(path, options = {}) {
       return fetchStaticFallback(path);
     }
 
-    // Handle auth failure — clear token and reload
-    if (res.status === 401 && false) {
+    // Handle auth failure — clear token and reload to login screen
+    if (res.status === 401) {
       localStorage.removeItem("crm_token");
       window.location.reload();
       throw new Error("Session expired");
@@ -191,6 +191,12 @@ export const fetchTeam = () => request("/team");
 
 export const completeTask = (id) =>
   request(`/tasks/${id}`, { method: "PATCH", body: JSON.stringify({ is_completed: true }) });
+
+export const updateTask = (id, fields) =>
+  request(`/tasks/${id}`, { method: "PATCH", body: JSON.stringify(fields) });
+
+export const fetchCompletedTasks = (clientId) =>
+  request(`/tasks/history${clientId ? `?client_id=${clientId}` : ""}`);
 
 export const deleteTask = (id) =>
   request(`/tasks/${id}`, { method: "DELETE" });

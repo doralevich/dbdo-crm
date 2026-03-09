@@ -1,11 +1,12 @@
 import { NavLink, useLocation, Outlet } from "react-router-dom";
 import {
   LayoutDashboard, Users, CheckSquare, CalendarDays,
-  Menu, X, LogOut, ChevronDown, ChevronRight,
+  Menu, X, LogOut, ChevronDown, ChevronRight, Plus,
 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { fetchTaskClients } from "../lib/api";
+import { fetchTaskClients, fetchClients } from "../lib/api";
 import { cn } from "../lib/utils";
+import AddTaskModal from "./AddTaskModal";
 
 const navItems = [
   { to: "/",        icon: LayoutDashboard, label: "Dashboard" },
@@ -18,7 +19,13 @@ export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen]   = useState(false);
   const [tasksExpanded, setTasksExpanded] = useState(false);
   const [taskClients, setTaskClients]   = useState([]);
+  const [showAddTask, setShowAddTask]   = useState(false);
+  const [allClients, setAllClients]     = useState([]);
   const location = useLocation();
+
+  useEffect(() => {
+    fetchClients().then(setAllClients).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (tasksExpanded) {
@@ -105,6 +112,17 @@ export default function Layout({ children }) {
           })}
         </nav>
 
+        {/* Add Task button */}
+        <div className="px-3 pb-3">
+          <button
+            onClick={() => setShowAddTask(true)}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-gold px-4 py-2.5 text-sm font-semibold text-black hover:bg-brand-gold/90 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            Add Task
+          </button>
+        </div>
+
         {/* User footer */}
         <div className="px-3 py-3 border-t border-white/8">
           <div className="flex items-center justify-between px-2">
@@ -138,6 +156,14 @@ export default function Layout({ children }) {
           {children || <Outlet />}
         </main>
       </div>
+
+      {showAddTask && (
+        <AddTaskModal
+          clients={allClients}
+          onClose={() => setShowAddTask(false)}
+          onAdd={() => setShowAddTask(false)}
+        />
+      )}
     </div>
   );
 }

@@ -12,7 +12,7 @@ const router = Router();
 router.get("/", async (req, res) => {
   try {
     if (supabase) {
-      let query = supabase.from("clients").select("*").order("last_activity", { ascending: false }).range(0, 999);
+      let query = supabase.from("clients").select("*").neq("type", "contact").order("last_activity", { ascending: false }).range(0, 999);
 
       if (req.query.status) query = query.eq("status", req.query.status);
       if (req.query.type) query = query.eq("type", req.query.type);
@@ -239,6 +239,20 @@ router.post("/:id/interactions", async (req, res) => {
       return res.json(data);
     }
     res.json({ ...req.body, id: `i${Date.now()}`, client_id: req.params.id });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// DELETE /api/clients/:id
+router.delete("/:id", async (req, res) => {
+  try {
+    if (supabase) {
+      const { error } = await supabase.from("clients").delete().eq("id", req.params.id);
+      if (error) throw error;
+      return res.json({ success: true });
+    }
+    res.json({ success: true });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
