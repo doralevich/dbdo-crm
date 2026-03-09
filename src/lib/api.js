@@ -83,7 +83,7 @@ function getAuthHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-async function request(path, options = {}) {
+export async function request(path, options = {}) {
   try {
     const res = await fetch(`${API_BASE}${path}`, {
       headers: {

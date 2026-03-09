@@ -1,49 +1,38 @@
 import { useState, useEffect, useMemo } from "react";
 import {
-  CheckSquare,
-  AlertTriangle,
-  Calendar,
-  ChevronDown,
-  ChevronRight,
-  CheckCircle2,
-  Pencil,
-  Trash2,
+  CheckSquare, AlertTriangle, Calendar, ChevronDown,
+  ChevronRight, CheckCircle2, Plus,
 } from "lucide-react";
 import Card from "../components/Card";
-import Badge from "../components/Badge";
 import { PageLoader } from "../components/Spinner";
 import EmptyState from "../components/EmptyState";
-import { fetchTasks, completeTask, deleteTask } from "../lib/api";
+import TaskDrawer from "../components/TaskDrawer";
+import AddTaskModal from "../components/AddTaskModal";
+import { fetchTasks, fetchClients } from "../lib/api";
 import { cn, formatDate } from "../lib/utils";
 
 const PRIORITY = {
-  4: { label: "Urgent", border: "border-l-red-500",    dot: "bg-red-500",    text: "text-red-400" },
-  3: { label: "High",   border: "border-l-orange-400", dot: "bg-orange-400", text: "text-orange-400" },
-  2: { label: "Medium", border: "border-l-blue-400",   dot: "bg-blue-400",   text: "text-blue-400" },
-  1: { label: "Low",    border: "border-l-gray-500",   dot: "bg-gray-500",   text: "text-gray-500" },
+  4: { label: "Urgent", border: "border-l-red-500",    dot: "bg-red-500" },
+  3: { label: "High",   border: "border-l-orange-400", dot: "bg-orange-400" },
+  2: { label: "Medium", border: "border-l-blue-400",   dot: "bg-blue-400" },
+  1: { label: "Low",    border: "border-l-gray-500",   dot: "bg-gray-500" },
 };
 
-function TaskRow({ task, today, onComplete, onDelete }) {
+function TaskRow({ task, today, onClick }) {
   const p = PRIORITY[task.priority] || PRIORITY[1];
   const isOverdue = task.due_date && task.due_date < today;
   const isToday   = task.due_date && task.due_date === today;
 
   return (
-    <div className={cn(
-      "group flex items-center gap-3 px-4 py-2.5 border-l-2 hover:bg-surface-raised/40 transition-colors",
-      p.border,
-      isOverdue && "bg-red-400/5"
-    )}>
-      {/* Complete button */}
-      <button
-        onClick={() => onComplete(task.id)}
-        className="shrink-0 text-text-muted hover:text-emerald-400 transition-colors"
-        title="Mark complete"
-      >
-        <CheckCircle2 className="h-4 w-4" />
-      </button>
-
-      {/* Content */}
+    <button
+      onClick={() => onClick(task)}
+      className={cn(
+        "group w-full flex items-center gap-3 px-4 py-2.5 border-l-2 hover:bg-surface-raised/40 transition-colors text-left",
+        p.border,
+        isOverdue && "bg-red-400/5"
+      )}
+    >
+      <CheckCircle2 className="h-4 w-4 shrink-0 text-text-muted/40 group-hover:text-emerald-400 transition-colors" />
       <div className="min-w-0 flex-1">
         <p className="text-sm text-text-primary leading-snug">{task.content}</p>
         {task.due_date && (
@@ -57,33 +46,28 @@ function TaskRow({ task, today, onComplete, onDelete }) {
              formatDate(task.due_date)}
           </span>
         )}
+        {(task.description || task.notes) && (
+          <span className="ml-2 text-xs text-text-muted/60 italic">has notes</span>
+        )}
       </div>
-
-      {/* Priority dot */}
       <div className={cn("h-2 w-2 rounded-full shrink-0", p.dot)} title={p.label} />
-
-      {/* Actions — show on hover */}
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        <button
-          onClick={() => onDelete(task.id)}
-          className="rounded p-1 text-text-muted hover:text-red-400 transition-colors"
-          title="Delete"
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-        </button>
-      </div>
-    </div>
+    </button>
   );
 }
 
 export default function Tasks() {
-  const [tasks, setTasks]               = useState([]);
-  const [loading, setLoading]           = useState(true);
-  const [filterPriority, setFilter]     = useState("all");
-  const [expandedGroups, setExpanded]   = useState(new Set()); // starts empty = all closed
+  const [tasks, setTasks]             = useState([]);
+  const [clients, setClients]         = useState([]);
+  const [loading, setLoading]         = useState(true);
+  const [filterPriority, setFilter]   = useState("all");
+  const [expandedGroups, setExpanded] = useState(new Set());
+  const [selectedTask, setSelected]   = useState(null);
+  const [showAdd, setShowAdd]         = useState(false);
 
   useEffect(() => {
-    fetchTasks().then(setTasks).finally(() => setLoading(false));
+    Promise.all([fetchTasks(), fetchClients()])
+      .then(([t, c]) => { setTasks(t); setClients(c); })
+      .finally(() => setLoading(false));
   }, []);
 
   const today = new Date().toISOString().split("T")[0];
@@ -97,7 +81,7 @@ export default function Tasks() {
   const grouped = useMemo(() => {
     const g = {};
     for (const t of filtered) {
-      const key = t.owner || t.project_name || "Uncategorized";
+      const key = t.owner || "Uncategorized";
       if (!g[key]) g[key] = [];
       g[key].push(t);
     }
@@ -116,14 +100,20 @@ export default function Tasks() {
     return next;
   });
 
-  const handleComplete = async (id) => {
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, is_completed: true } : t));
-    try { await completeTask(id); } catch {}
+  const handleTaskUpdate = (updated) => {
+    if (updated.is_completed) {
+      setTasks(prev => prev.filter(t => t.id !== updated.id));
+    } else {
+      setTasks(prev => prev.map(t => t.id === updated.id ? { ...t, ...updated } : t));
+    }
   };
 
-  const handleDelete = async (id) => {
+  const handleTaskDelete = (id) => {
     setTasks(prev => prev.filter(t => t.id !== id));
-    try { await deleteTask(id); } catch {}
+  };
+
+  const handleTaskAdd = (newTask) => {
+    setTasks(prev => [newTask, ...prev]);
   };
 
   const overdue  = filtered.filter(t => t.due_date && t.due_date < today);
@@ -137,9 +127,9 @@ export default function Tasks() {
       <div className="flex items-end justify-between">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Tasks</h1>
-          <p className="text-sm text-text-muted mt-0.5">{filtered.length} remaining</p>
+          <p className="text-sm text-text-muted mt-0.5">{filtered.length} open</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           {overdue.length > 0 && (
             <div className="flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-400/5 px-3 py-1.5">
               <AlertTriangle className="h-3.5 w-3.5 text-red-400" />
@@ -152,6 +142,13 @@ export default function Tasks() {
               <span className="text-xs font-medium text-brand-gold">{dueToday.length} today</span>
             </div>
           )}
+          <button
+            onClick={() => setShowAdd(true)}
+            className="flex items-center gap-1.5 rounded-lg bg-brand-gold px-4 py-2 text-sm font-semibold text-brand-navy hover:bg-brand-gold/90 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            Add Task
+          </button>
         </div>
       </div>
 
@@ -168,11 +165,11 @@ export default function Tasks() {
         ))}
       </div>
 
-      {/* 2-column grid of accordions */}
+      {/* Task groups — 2-column */}
       {Object.keys(grouped).length === 0 ? (
-        <EmptyState icon={CheckSquare} title="No tasks" description="All caught up, or adjust filters." />
+        <EmptyState icon={CheckSquare} title="No open tasks" description="All caught up. Add a task to get started." />
       ) : (
-        <div className="columns-1 lg:columns-2 gap-4 space-y-0">
+        <div className="columns-1 lg:columns-2 gap-4">
           {Object.entries(grouped).map(([project, projectTasks]) => {
             const isExpanded = expandedGroups.has(project);
             const overdueCt  = projectTasks.filter(t => t.due_date && t.due_date < today).length;
@@ -201,8 +198,7 @@ export default function Tasks() {
                           key={task.id}
                           task={task}
                           today={today}
-                          onComplete={handleComplete}
-                          onDelete={handleDelete}
+                          onClick={setSelected}
                         />
                       ))}
                     </div>
@@ -212,6 +208,26 @@ export default function Tasks() {
             );
           })}
         </div>
+      )}
+
+      {/* Task drawer */}
+      {selectedTask && (
+        <TaskDrawer
+          task={selectedTask}
+          clients={clients}
+          onClose={() => setSelected(null)}
+          onUpdate={handleTaskUpdate}
+          onDelete={handleTaskDelete}
+        />
+      )}
+
+      {/* Add task modal */}
+      {showAdd && (
+        <AddTaskModal
+          clients={clients}
+          onClose={() => setShowAdd(false)}
+          onAdd={handleTaskAdd}
+        />
       )}
     </div>
   );
