@@ -218,14 +218,17 @@ export default function Clients() {
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([fetchClients(), fetchTaskClients()])
-      .then(([cls, taskClients]) => {
+    fetchClients()
+      .then(cls => {
         setClients([...cls].sort((a, b) => a.name.localeCompare(b.name)));
-        const map = {};
-        for (const tc of taskClients || []) {
-          if (tc.id) map[tc.id] = tc;
-        }
-        setTaskMap(map);
+        // Load tasks separately — don't block clients if it fails
+        fetchTaskClients().then(taskClients => {
+          const map = {};
+          for (const tc of taskClients || []) {
+            if (tc.id) map[tc.id] = tc;
+          }
+          setTaskMap(map);
+        }).catch(() => {});
       })
       .finally(() => setLoading(false));
   }, []);
