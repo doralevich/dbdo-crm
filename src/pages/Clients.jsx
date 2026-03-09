@@ -9,6 +9,8 @@ import {
   LayoutGrid,
   List,
   User,
+  Mail,
+  Phone,
 
 } from "lucide-react";
 import Card from "../components/Card";
@@ -115,6 +117,22 @@ function ClientCard({ client }) {
 
 
 
+        {/* Email + Phone */}
+        <div className="space-y-1 mb-3">
+          {client.contact_email && (
+            <div className="flex items-center gap-1.5 text-xs text-text-secondary truncate">
+              <Mail className="h-3 w-3 text-text-muted shrink-0" />
+              <span className="truncate">{client.contact_email}</span>
+            </div>
+          )}
+          {client.contact_phone && (
+            <div className="flex items-center gap-1.5 text-xs text-text-secondary">
+              <Phone className="h-3 w-3 text-text-muted shrink-0" />
+              <span>{client.contact_phone}</span>
+            </div>
+          )}
+        </div>
+
         {/* Footer: Activity + Value */}
         <div className="flex items-center justify-between text-xs text-text-muted pt-3 border-t border-border-subtle">
           <div className="flex items-center gap-1.5">
@@ -210,7 +228,7 @@ export default function Clients() {
             cls.length > 0 ? (
               <div key={name} className="space-y-3">
                 <h2 className="text-sm font-bold text-text-secondary uppercase tracking-wider px-1">{name} ({cls.length})</h2>
-                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {cls.map((client) => <ClientCard key={client.id} client={client} />)}
                 </div>
               </div>
@@ -218,7 +236,7 @@ export default function Clients() {
           )}
         </div>
       ) : view === "grid" ? (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filtered.map((client) => <ClientCard key={client.id} client={client} />)}
         </div>
       ) : (
