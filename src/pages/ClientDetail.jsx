@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
   Globe,
@@ -56,7 +56,8 @@ export default function ClientDetail() {
   const [interactions, setInteractions] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("overview");
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "overview");
   const [showNoteForm, setShowNoteForm] = useState(false);
   const [noteType, setNoteType] = useState("note");
   const [noteSummary, setNoteSummary] = useState("");

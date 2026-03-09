@@ -103,11 +103,11 @@ export default function Layout({ children }) {
                     {taskClients.map(client => (
                       <NavLink
                         key={client.id}
-                        to={`/tasks?client=${client.id}`}
+                        to={`/clients/${client.id}?tab=tasks`}
                         onClick={() => setSidebarOpen(false)}
                         className={cn(
                           "flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors truncate",
-                          location.search.includes(client.id)
+                          location.pathname.includes(client.id)
                             ? "text-brand-gold bg-brand-gold/10"
                             : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
                         )}
