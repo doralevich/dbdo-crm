@@ -99,7 +99,7 @@ export default function Layout({ children }) {
                   )}
                 </div>
                 {isTasks && tasksExpanded && (
-                  <div className="ml-8 mt-0.5 space-y-0.5 max-h-64 overflow-y-auto">
+                  <div className="ml-8 mt-0.5 space-y-0.5">
                     {taskClients.map(client => (
                       <NavLink
                         key={client.id}
