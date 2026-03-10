@@ -2,15 +2,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Users, DollarSign, AlertTriangle, TrendingUp, CheckSquare,
-  CalendarDays, ArrowRight, Clock, Circle, Star, Eye, Plus,
+  CalendarDays, ArrowRight, Clock, Circle, Star, Eye,
   CloudSun, TrendingDown,
 } from "lucide-react";
 import StatCard from "../components/StatCard";
 import Card, { CardHeader, CardTitle } from "../components/Card";
 import Badge from "../components/Badge";
 import { PageLoader } from "../components/Spinner";
-import AddTaskModal from "../components/AddTaskModal";
-import TaskDrawer from "../components/TaskDrawer";
 import { fetchDashboardStats, fetchTasks, fetchEvents, fetchClients } from "../lib/api";
 import { cn, formatCurrency, formatRelative, formatTime, getStatusColor } from "../lib/utils";
 
@@ -78,8 +76,6 @@ export default function Dashboard() {
   const [events, setEvents]   = useState([]);
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showAdd, setShowAdd]       = useState(false);
-  const [selectedTask, setSelected] = useState(null);
 
   const now     = useClock();
   const weather = useWeather();
@@ -88,13 +84,14 @@ export default function Dashboard() {
   useEffect(() => {
     Promise.all([
       fetchDashboardStats(),
-      fetchTasks(),
+      fetchTasks().catch(() => []),
       fetchEvents({ timeMin: new Date().toISOString(), timeMax: new Date(Date.now() + 14 * 86400000).toISOString() }),
       fetchClients(),
     ])
       .then(([s, t, ev, c]) => {
         setStats(s);
-        setTasks(t);
+        const taskList = Array.isArray(t) ? t : (t?.tasks || []);
+        setTasks(taskList.filter(t => !t.is_completed));
         setClients(c);
         const upcoming = (ev || [])
           .filter(e => new Date(e.start?.dateTime || e.start?.date) >= new Date())
@@ -106,10 +103,12 @@ export default function Dashboard() {
 
   if (loading) return <PageLoader />;
 
-  const today       = new Date().toISOString().split("T")[0];
-  const overdue     = tasks.filter(t => t.due_date && t.due_date < today && !t.is_completed);
-  const todayTasks  = tasks.filter(t => t.due_date && t.due_date === today && !t.is_completed);
-  const urgentTasks = [...overdue, ...todayTasks].slice(0, 5);
+  const today          = new Date().toISOString().split("T")[0];
+  const overdue        = tasks.filter(t => t.due_date && t.due_date < today);
+  const todayTasks     = tasks.filter(t => t.due_date && t.due_date === today);
+  const urgentTasks    = [...overdue, ...todayTasks]
+    .sort((a, b) => b.priority - a.priority)
+    .slice(0, 8);
   const upcomingEvents = events.slice(0, 5);
   const needsAttention = stats?.needs_attention || [];
 
@@ -130,10 +129,6 @@ export default function Dashboard() {
             {now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit" })}
           </h1>
         </div>
-        <button onClick={() => setShowAdd(true)}
-          className="flex items-center gap-1.5 rounded-xl bg-brand-gold px-4 py-2.5 text-[13px] font-semibold text-black hover:bg-brand-gold/90 active:scale-95 transition-all">
-          <Plus className="h-4 w-4" /> Add Task
-        </button>
       </div>
 
       {/* ── Weather + Stocks row */}
@@ -232,19 +227,17 @@ export default function Dashboard() {
             ) : urgentTasks.map((task) => {
               const isOverdue = task.due_date && task.due_date < today;
               return (
-                <button key={task.id} onClick={() => setSelected(task)}
-                  className="w-full flex items-start gap-3 rounded-lg border border-border-subtle p-3 hover:border-brand-gold/30 transition-colors text-left">
+                <Link key={task.id} to="/tasks"
+                  className="flex items-start gap-3 rounded-lg border border-border-subtle p-3 hover:border-brand-gold/30 transition-colors">
                   <div className={cn("mt-1 h-2 w-2 shrink-0 rounded-full",
-                    task.priority === 4 ? "bg-red-500" : task.priority === 3 ? "bg-orange-400" : "bg-blue-400"
+                    task.priority === 4 ? "bg-red-500" : task.priority === 3 ? "bg-orange-400" : task.priority === 2 ? "bg-blue-400" : "bg-gray-500"
                   )} />
                   <div className="min-w-0 flex-1">
+                    {task.owner && <p className="text-[10px] text-text-muted/60 mb-0.5">{task.owner}</p>}
                     <p className="text-sm text-text-primary truncate">{task.content}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs text-text-muted">{task.owner}</span>
-                      {isOverdue && <span className="text-xs text-red-400 font-medium">Overdue</span>}
-                    </div>
+                    {isOverdue && <span className="text-xs text-red-400 font-medium">Overdue</span>}
                   </div>
-                </button>
+                </Link>
               );
             })}
           </div>
@@ -313,22 +306,6 @@ export default function Dashboard() {
         )}
       </div>
 
-      {showAdd && (
-        <AddTaskModal clients={clients} onClose={() => setShowAdd(false)} onAdd={() => setShowAdd(false)} />
-      )}
-
-      {selectedTask && (
-        <TaskDrawer
-          task={selectedTask}
-          clients={clients}
-          onClose={() => setSelected(null)}
-          onUpdate={(updated) => {
-            if (updated.is_completed) setTasks(prev => prev.filter(t => t.id !== updated.id));
-            else setTasks(prev => prev.map(t => t.id === updated.id ? { ...t, ...updated } : t));
-          }}
-          onDelete={(id) => setTasks(prev => prev.filter(t => t.id !== id))}
-        />
-      )}
     </div>
   );
 }

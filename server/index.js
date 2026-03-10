@@ -13,6 +13,7 @@ import calendarRouter from "./routes/calendar.js";
 import dashboardRouter from "./routes/dashboard.js";
 import teamRouter from "./routes/team.js";
 import contactsRouter from "./routes/contacts.js";
+// import todoistRouter from "./routes/todoist.js"; // disabled — Supabase tasks are source of truth
 import { setupTables } from "./lib/setup-tables.js";
 import { startContactsSync } from "./lib/sync-contacts.js";
 import { startCalendarSync } from "./lib/sync-calendar.js";
@@ -42,6 +43,7 @@ app.use("/api/calendar", calendarRouter);
 app.use("/api/dashboard", dashboardRouter);
 app.use("/api/team", teamRouter);
 app.use("/api/contacts", contactsRouter);
+// app.use("/api/todoist", todoistRouter); // disabled
 
 // Stock quote proxy — avoids CORS issues from the browser
 app.get("/api/quotes", async (req, res) => {

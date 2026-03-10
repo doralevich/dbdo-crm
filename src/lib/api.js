@@ -205,3 +205,8 @@ export const deleteClient = (id) =>
   request(`/clients/${id}`, { method: "DELETE" });
 
 export const fetchTaskClients = () => request("/tasks/clients");
+
+// Todoist (disabled — Supabase tasks are now the source of truth)
+// export const fetchTodoistTasks = () => request("/todoist/tasks");
+// export const fetchTodoistProjects = () => request("/todoist/projects");
+// export const closeTodoistTask = (id) => request("/todoist/tasks/" + id + "/close", { method: "POST" });

@@ -9,18 +9,20 @@ const PRIORITY_LABEL = { 1: "low", 2: "medium", 3: "high", 4: "urgent" };
 async function ensureSchema() {
   if (!supabase) return;
   // Add columns if missing — Supabase ignores if already exists via RPC
-  await supabase.rpc("exec_sql", { sql: `
-    ALTER TABLE tasks ADD COLUMN IF NOT EXISTS description text;
-    ALTER TABLE tasks ADD COLUMN IF NOT EXISTS notes text;
-    ALTER TABLE tasks ADD COLUMN IF NOT EXISTS completed_at timestamptz;
-    CREATE TABLE IF NOT EXISTS task_comments (
-      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-      task_id uuid REFERENCES tasks(id) ON DELETE CASCADE,
-      content text NOT NULL,
-      author text DEFAULT 'David',
-      created_at timestamptz DEFAULT now()
-    );
-  ` }).catch(() => {});
+  try {
+    await supabase.rpc("exec_sql", { sql: `
+      ALTER TABLE tasks ADD COLUMN IF NOT EXISTS description text;
+      ALTER TABLE tasks ADD COLUMN IF NOT EXISTS notes text;
+      ALTER TABLE tasks ADD COLUMN IF NOT EXISTS completed_at timestamptz;
+      CREATE TABLE IF NOT EXISTS task_comments (
+        id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        task_id uuid REFERENCES tasks(id) ON DELETE CASCADE,
+        content text NOT NULL,
+        author text DEFAULT 'David',
+        created_at timestamptz DEFAULT now()
+      );
+    ` });
+  } catch (_) {}
 }
 ensureSchema();
 
