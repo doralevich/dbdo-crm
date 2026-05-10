@@ -13,6 +13,7 @@ import calendarRouter from "./routes/calendar.js";
 import dashboardRouter from "./routes/dashboard.js";
 import teamRouter from "./routes/team.js";
 import contactsRouter from "./routes/contacts.js";
+import intakeRouter from "./routes/intake.js";
 // import todoistRouter from "./routes/todoist.js"; // disabled — Supabase tasks are source of truth
 import { setupTables } from "./lib/setup-tables.js";
 import { startContactsSync } from "./lib/sync-contacts.js";
@@ -31,6 +32,9 @@ app.post("/api/auth/login", loginHandler);
 // Google OAuth endpoints (public — no auth required)
 app.get("/auth/google", authGoogleHandler);
 app.get("/auth/callback", authCallbackHandler);
+
+// Public intake endpoint — no auth, validated by intake key
+app.use("/api/intake", intakeRouter);
 
 // Protect all API routes
 app.use("/api", authMiddleware);
@@ -70,8 +74,8 @@ app.get("/{*splat}", (req, res) => {
   res.sendFile(join(distPath, "index.html"));
 });
 
-app.listen(PORT, async () => {
-  console.log(`Donna CRM API running on http://localhost:${PORT}`);
+app.listen(PORT, '127.0.0.1', async () => {
+  console.log(`Donna CRM API running on http://127.0.0.1:${PORT}`);
 
   // Setup tables then start sync
   await setupTables();
